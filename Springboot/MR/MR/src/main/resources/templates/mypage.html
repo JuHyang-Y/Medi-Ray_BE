@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Page</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <style>
+      /* 아코디언 메뉴 기본적으로 숨김 (오른쪽에서 슬라이드됨) */
+      #accordionMenu {
+        position: fixed;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 250px;
+        background-color: black;
+        padding: 1rem;
+        z-index: 30;
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+      }
+
+      /* 메뉴가 열렸을 때 사용하는 클래스 */
+      #accordionMenu.open {
+        transform: translateX(0);
+      }
+    </style>
+  </head>
+
+  <body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <header class="bg-white w-full h-16 shadow-md fixed flex items-center px-4 z-10">
+      <!-- 로고 이미지 -->
+      <img
+        src="assets/img/logo.svg"
+        alt="Medi-Ray Logo"
+        class="w-24 h-auto sm:w-32 cursor-pointer"
+        id="logo"
+      />
+
+      <!-- 햄버거 버튼 -->
+      <button id="menuToggle" class="ml-auto text-gray-800">
+        <i class="fas fa-bars text-2xl"></i>
+      </button>
+    </header>
+
+    <!-- Accordion Menu (Right Sidebar) -->
+    <div id="accordionMenu" class="bg-black text-white p-6">
+      <!-- Close Button -->
+      <button id="closeBtn" class="text-white mb-4 focus:outline-none">
+        <i class="fas fa-times text-xl"></i> Close
+      </button>
+
+      <!-- User Info with Profile Image -->
+      <div class="flex items-center mb-6">
+        <img
+          src="./assets/img/profile.png"
+          alt="Profile Image"
+          class="w-12 h-12 rounded-full mr-4"
+        />
+        <div id="user-info" class="text-gray-300"></div>
+      </div>
+
+      <!-- Accordion Links -->
+      <a href="about" class="py-2 block hover:bg-gray-700 rounded">About Us</a>
+      <a href="dicom" class="py-2 block hover:bg-gray-700 rounded">DICOM Upload</a>
+      <a href="diagnosis" class="py-2 block hover:bg-gray-700 rounded">Diagnosis</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex justify-center items-center min-h-screen pt-20 px-4 md:px-8">
+      <div class="w-full max-w-2xl bg-white p-6 sm:p-8 shadow-md rounded-lg">
+        <h2 class="text-xl md:text-2xl font-bold text-center mb-6">My Page</h2>
+
+        <form id="mypageForm" class="flex flex-col items-center justify-center">
+          <div class="space-y-4 w-full">
+            <div>
+              <label for="name" class="block text-gray-700 text-sm mb-1">이름</label>
+              <input
+                type="text"
+                id="name"
+                class="w-full p-2 border border-gray-300 rounded"
+                placeholder="다니엘"
+                readonly
+              />
+            </div>
+
+            <div>
+              <label for="phone" class="block text-gray-700 text-sm mb-1">전화번호</label>
+              <input
+                type="text"
+                id="phone"
+                class="w-full p-2 border border-gray-300 rounded"
+                placeholder="010-1577-1577"
+                readonly
+              />
+            </div>
+
+            <div>
+              <label for="email" class="block text-gray-700 text-sm mb-1">이메일</label>
+              <input
+                type="email"
+                id="email"
+                class="w-full p-2 border border-gray-300 rounded"
+                placeholder="example@gmali.com"
+                readonly
+              />
+            </div>
+
+            <div>
+              <label for="password" class="block text-gray-700 text-sm mb-1">비밀번호</label>
+              <input
+                type="password"
+                id="password"
+                class="w-full p-2 border border-gray-300 rounded"
+                placeholder="영문, 숫자, 특수문자가 들어간 8-20자"
+              />
+              <div id="password-message" class="text-red-500 text-sm"></div>
+            </div>
+
+            <div>
+              <label for="password-confirm" class="block text-gray-700 text-sm mb-1">비밀번호 확인</label>
+              <input
+                type="password"
+                id="password-confirm"
+                class="w-full p-2 border border-gray-300 rounded"
+                placeholder="비밀번호를 한 번 더 입력해주세요"
+              />
+              <div id="confirm-password-message" class="text-sm"></div>
+              <button
+                type="button"
+                id="update-password"
+                class="mt-2 w-full p-2 bg-gray-500 text-white rounded"
+              >
+                수정
+              </button>
+            </div>
+
+            <div>
+              <label for="doctor-code" class="block text-gray-700 text-sm mb-1">의사코드</label>
+              <input
+                type="text"
+                id="doctor-code"
+                class="w-full p-2 border border-gray-300 rounded"
+                placeholder="24-00000001"
+                readonly
+              />
+            </div>
+
+            <div>
+              <label for="hospital" class="block text-gray-700 text-sm mb-1">의사소속</label>
+              <input
+                type="text"
+                id="hospital"
+                class="w-full p-2 border border-gray-300 rounded"
+                placeholder="의사소속을 입력해주세요"
+              />
+              <div id="division-message" class="text-red-500 text-sm"></div>
+              <button
+                type="button"
+                id="update-division"
+                class="mt-2 w-full p-2 bg-gray-500 text-white rounded"
+              >
+                수정
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- JavaScript for menu toggle and button clicks -->
+    <script src="/assets/js/header.js"></script>
+    <script src="/assets/js/mypage.js"></script>
+  </body>
+</html>

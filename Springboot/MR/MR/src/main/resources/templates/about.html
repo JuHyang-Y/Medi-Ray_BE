@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Us - Medi-Ray</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./assets/css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: 'Pretendard-Regular';
+      }
+    </style>
+  </head>
+  <body class="bg-white">
+    <!-- Header -->
+    <header class="bg-white w-full h-16 shadow-md fixed flex items-center px-4">
+      <!-- 로고 이미지 -->
+      <img
+        src="assets/img/logo.svg"
+        alt="Medi-Ray Logo"
+        class="w-32 h-auto cursor-pointer"
+        id="logo"
+      />
+
+      <!-- 햄버거 버튼 -->
+      <button id="menuToggle" class="ml-auto text-gray-800">
+        <i class="fas fa-bars text-2xl"></i>
+      </button>
+    </header>
+
+    <!-- Accordion Menu (Right Sidebar) -->
+    <div
+      id="accordionMenu"
+      class="bg-black text-white p-6 transform translate-x-full fixed top-0 right-0 h-full w-64 transition-transform duration-300"
+    >
+      <!-- Close Button -->
+      <button id="closeBtn" class="text-white mb-4 focus:outline-none">
+        <i class="fas fa-times text-xl"></i> Close
+      </button>
+
+      <!-- User Info with Profile Image -->
+      <div class="flex items-center mb-6">
+        <img
+          src="assets/img/profile.png"
+          alt="Profile Image"
+          class="w-12 h-12 rounded-full mr-4"
+        />
+        <div id="user-info" class="text-gray-300">
+          <!-- 로그인 정보가 동적으로 추가됩니다 -->
+        </div>
+      </div>
+
+      <!-- Accordion Links -->
+      <a href="about" class="py-2 block hover:bg-gray-700 rounded"
+        >About Us</a
+      >
+      <a href="dicom" class="py-2 block hover:bg-gray-700 rounded"
+        >DICOM Upload</a
+      >
+      <a href="diagnosis" class="py-2 block hover:bg-gray-700 rounded"
+        >Diagnosis</a
+      >
+    </div>
+    <!-- Main Content -->
+    <div class="flex justify-center items-center h-screen">
+      <div class="text-center">
+        <img
+          src="/assets/img/logo2.png"
+          alt="Medi-Ray Logo"
+          class="mx-auto mb-4 w-70"
+        />
+        <p class="text-gray-600 text-xl mb-8">
+          MEDI-RAY 는 의료진의 업무 효율을 높이기 위한 진단 어시스턴트입니다.<br />
+          최첨단 AI 기술을 활용하여 DICOM 이미지를 분석합니다.<br />
+          더 빠르고, 더 정확하고, 더 나은 결정을 위한 놀라운 경험을 선사합니다.
+        </p>
+      </div>
+    </div>
+
+    <!-- 상단 오른쪽 로그인 정보 -->
+    <header class="fixed top-0 right-0 p-4 mr-4">
+      <div class="flex items-center space-x-2 text-gray-800" id="user-info">
+        <!-- 사용자 이름과 로그인 정보가 동적으로 표시됨 -->
+      </div>
+    </header>
+
+    <!-- JavaScript for handling user data -->
+    <script src="assets/js/header.js"></script>
+    <script>
+    // 로고 클릭 시 main로 이동
+      document.getElementById('logo').addEventListener('click', function () {
+        window.location.href = 'main';
+      });
+    </script>
+  </body>
+</html>
