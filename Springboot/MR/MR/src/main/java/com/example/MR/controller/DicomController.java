@@ -40,6 +40,7 @@ public class DicomController {
 
     @Autowired
     private MRMapper mapper;
+    @Autowired
     private DiagnosisMapper dmapper;
 
     @PostMapping("/dicom")

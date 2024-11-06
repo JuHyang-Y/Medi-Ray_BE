@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 			// 원하는 작업 수행
 			storeXrayCode(xrayCode);
-			window.location.href="/diagnosis/xray?ptCode="+ptCode;
+			window.location.href = "/diagnosis/xray?ptCode=" + ptCode;
 		}
 	});
 

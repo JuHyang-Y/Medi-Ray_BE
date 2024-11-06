@@ -1,124 +1,103 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DICOM Upload - Medi-Ray</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="assets/css/styles.css" />
-    
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-    />
-  </head>
-  <body class="bg-white">
-    <!-- Header -->
-    <header
-      class="bg-white w-full h-16 shadow-md fixed top-0 flex items-center px-4 z-50"
-    >
-      <!-- 로고 이미지 -->
-      <img
-        src="/assets/img/logo.svg"
-        alt="Medi-Ray Logo"
-        class="w-32 h-auto cursor-pointer"
-        id="logo"
-      />
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DICOM Upload - Medi-Ray</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="assets/css/styles.css" />
 
-      <!-- 햄버거 버튼 -->
-      <button id="menuToggle" class="ml-auto text-gray-800">
-        <i class="fas fa-bars text-2xl"></i>
-      </button>
-    </header>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+</head>
+<body class="bg-white">
+	<!-- Header -->
+	<header
+		class="bg-white w-full h-16 shadow-md fixed top-0 flex items-center px-4 z-50">
+		<!-- 로고 이미지 -->
+		<img src="/assets/img/logo.svg" alt="Medi-Ray Logo"
+			class="w-32 h-auto cursor-pointer" id="logo" />
 
-    <!-- Accordion Menu (Right Sidebar) -->
-    <div
-      id="accordionMenu"
-      class="bg-black text-white p-6 transform translate-x-full fixed top-0 right-0 h-full w-64 transition-transform duration-300 z-50"
-    >
-      <!-- Close Button -->
-      <button id="closeBtn" class="text-white mb-4 focus:outline-none">
-        <i class="fas fa-times text-xl"></i> 닫기
-      </button>
+		<!-- 햄버거 버튼 -->
+		<button id="menuToggle" class="ml-auto text-gray-800">
+			<i class="fas fa-bars text-2xl"></i>
+		</button>
+	</header>
 
-      <!-- User Info with Profile Image -->
-      <div class="flex items-center mb-6">
-        <img
-          src="assets/img/profile.png"
-          alt="Profile Image"
-          class="w-12 h-12 rounded-full mr-4"
-        />
-        <div id="user-info" class="text-gray-300">
-          <!-- 로그인 정보가 동적으로 추가됩니다 -->
-        </div>
-      </div>
+	<!-- Accordion Menu (Right Sidebar) -->
+	<div id="accordionMenu"
+		class="bg-black text-white p-6 transform translate-x-full fixed top-0 right-0 h-full w-64 transition-transform duration-300 z-50">
+		<!-- Close Button -->
+		<button id="closeBtn" class="text-white mb-4 focus:outline-none">
+			<i class="fas fa-times text-xl"></i> 닫기
+		</button>
 
-      <!-- Accordion Links -->
-      <a href="about" class="py-2 block hover:bg-gray-700 rounded">About Us</a>
-      <a href="dicom" class="py-2 block hover:bg-gray-700 rounded"
-        >DICOM Upload</a
-      >
-      <a href="diagnosis" class="py-2 block hover:bg-gray-700 rounded"
-        >Diagnosis</a
-      >
-    </div>
+		<!-- User Info with Profile Image -->
+		<div class="flex items-center mb-6">
+			<img src="assets/img/profile.png" alt="Profile Image"
+				class="w-12 h-12 rounded-full mr-4" />
+			<div id="user-info" class="text-gray-300">
+				<!-- 로그인 정보가 동적으로 추가됩니다 -->
+			</div>
+		</div>
 
-    <!-- 업로드 컨테이너 -->
-    <div class="upload-container mx-auto mt-24">
-      <h1 id="dicomTitle" class="text-3xl font-bold mb-4 text-center">
-        DICOM Upload
-      </h1>
+		<!-- Accordion Links -->
+		<a href="about" class="py-2 block hover:bg-gray-700 rounded">About
+			Us</a> <a href="dicom" class="py-2 block hover:bg-gray-700 rounded">DICOM
+			Upload</a> <a href="diagnosis"
+			class="py-2 block hover:bg-gray-700 rounded">Diagnosis</a>
+	</div>
 
-      <!-- 파일 업로드 영역 -->
-      <div class="upload-box" id="upload-box">
-        <div id="upload-content">
-          <p>Drag or Drop files here or</p>
-          <button
-            class="mt-4 bg-gray-500 text-white py-2 px-4 rounded"
-            id="selectFilesBtn"
-          >
-            Select files
-          </button>
-        </div>
-        <!-- 다이콤파일(.dcm)만 받도록 설정 -->
-        <input type="file" id="fileInput" class="hidden" accept=".dcm" />
-      </div>
+	<!-- 업로드 컨테이너 -->
+	<div class="upload-container mx-auto mt-24">
+		<h1 id="dicomTitle" class="text-3xl font-bold mb-4 text-center">
+			DICOM Upload</h1>
 
-      <!-- 파일 업로드 시 미리보기 -->
-      <div id="preview-container" class="mt-6 hidden preview-container">
-        <button class="close-preview absolute top-2 right-2">×</button>
-        <!-- 닫기 버튼 추가 -->
-        <img id="preview-image" class="preview-image" alt="Image Preview" />
-        <!-- 전송 버튼 -->
-        <button id="submitBtn" class="bg-blue-500 text-white py-2 px-4 rounded">
-          전송
-        </button>
-      </div>
-    </div>
+		<!-- 파일 업로드 영역 -->
+		<div class="upload-box" id="upload-box">
+			<div id="upload-content">
+				<p>Drag or Drop files here or</p>
+				<button class="mt-4 bg-gray-500 text-white py-2 px-4 rounded"
+					id="selectFilesBtn">Select files</button>
+			</div>
+			<!-- 다이콤파일(.dcm)만 받도록 설정 -->
+			<input type="file" id="fileInput" class="hidden" accept=".dcm" />
+		</div>
 
-    <!-- 환자 정보 테이블 -->
-    <div class="patient-info-container mt-8 mx-auto">
-      <table class="table-auto w-full border">
-        <thead>
-          <tr class="bg-gray-200">
-            <th class="border px-4 py-2">환자코드</th>
-            <th class="border px-4 py-2">이름</th>
-            <th class="border px-4 py-2">생년월일</th>
-            <th class="border px-4 py-2">성별</th>
-            <th class="border px-4 py-2">담당의사</th>
-          </tr>
-        </thead>
-        <tbody id="patient-info-body" >
-          <!-- JavaScript로 동적 렌더링 -->
-        </tbody>
-      </table>
-    </div>
+		<!-- 파일 업로드 시 미리보기 -->
+		<div id="preview-container" class="mt-6 hidden preview-container">
+			<button class="close-preview absolute top-2 right-2">×</button>
+			<!-- 닫기 버튼 추가 -->
+			<img id="preview-image" class="preview-image" alt="Image Preview" />
+			<!-- 전송 버튼 -->
+			<button id="submitBtn"
+				class="bg-blue-500 text-white py-2 px-4 rounded">전송</button>
+		</div>
+	</div>
 
-    <!-- JavaScript 추가 -->
-    <script src="assets/js/dicom.js"></script>
-    <script src="assets/js/header.js"></script>
-    <script>
+	<!-- 환자 정보 테이블 -->
+	<div class="patient-info-container mt-8 mx-auto">
+		<table class="table-auto w-full border">
+			<thead>
+				<tr class="bg-gray-200">
+					<th class="border px-4 py-2">환자코드</th>
+					<th class="border px-4 py-2">이름</th>
+					<th class="border px-4 py-2">생년월일</th>
+					<th class="border px-4 py-2">성별</th>
+					<th class="border px-4 py-2">담당의사</th>
+				</tr>
+			</thead>
+			<tbody id="patient-info-body">
+				<!-- JavaScript로 동적 렌더링 -->
+			</tbody>
+		</table>
+	</div>
+
+	<!-- JavaScript 추가 -->
+	<script src="/assets/js/dicom.js"></script>
+	<script src="/assets/js/header.js"></script>
+	<script>
           /* // 미리보기 닫기 버튼
           closePreviewBtn.addEventListener('click', function () {
               previewContainer.classList.add('hidden');
@@ -130,5 +109,5 @@
               window.location.href = 'main';
           });
     </script>
-  </body>
+</body>
 </html>

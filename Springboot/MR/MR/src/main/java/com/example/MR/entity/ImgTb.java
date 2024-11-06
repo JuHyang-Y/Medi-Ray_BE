@@ -12,4 +12,5 @@ public class ImgTb {
 	private String xrayImgPath;
 	private String dtCode;
 	private String dtOpinion;
+	
 }
