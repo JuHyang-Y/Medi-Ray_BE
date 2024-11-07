@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // jQuery AJAX 요청
         $.ajax({
-            url: 'https://test.com:8000/dupload', // 서버 업로드 엔드포인트
+            url: 'https://192.168.0.2:8000/dupload', // 서버 업로드 엔드포인트
             type: 'POST',
             enctype: 'multipart/form-data',
             data: formData,
@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', function () {
             contentType: false, // multipart/form-data를 사용하기 위해 false로 설정
             processData: false, // 데이터를 쿼리 스트링으로 변환하지 않도록 설정
             success: function(response) {
+				console.log("test")
+				
                 console.log('File uploaded successfully:', response);
                 
                 // ptCode 값을 전역 변수에 저장
@@ -44,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ptCode = response.metadata.ptCode;
                 }
 
+        
                 
                 // Base64 이미지 미리보기 표시
 	          if (response.image) {
@@ -55,9 +58,12 @@ document.addEventListener('DOMContentLoaded', function () {
             submitBtn.classList.remove('hidden');
             closePreviewBtn.classList.remove('hidden');
             patientInfoBody.classList.remove('hidden');
-
-            // ptCode를 이용해 담당 의사 정보 가져오기
+            
+    // ptCode를 이용해 담당 의사 정보 가져오기
             if (response.metadata.ptCode) {
+				
+				
+				console.log(response.metadata.ptCode)
               $.ajax({
                 url: `/api/upload/dtsearch?ptCode=${response.metadata.ptCode}`,
                 type: 'GET',
@@ -81,6 +87,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
               });
             }
+            
+            
           }
         },
             error: function(xhr, status, error) {

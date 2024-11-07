@@ -1,13 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
 	const canvas = document.getElementById('diagnosisCanvas');
 	const ctx = canvas.getContext('2d');
-	const brushToolButton = document.getElementById('brushTool');
-	const rectangleToolButton = document.getElementById('rectangleTool');
-	const clearCanvasButton = document.getElementById('clearCanvas');
 	const camButton = document.getElementById('camButton'); // New CAM button
 	const colorPicker = document.getElementById('colorPicker');
-	const brushSize = document.getElementById('brushSize');
-	const loadImageBtn = document.getElementById('loadImageBtn');
+	/*const loadImageBtn = document.getElementById('loadImageBtn');*/
 	const imageLoader = document.getElementById('imageLoader');
 	const diagnosisResults = document.getElementById('diagnosisResults');
 	/*const xrayCode = localStorage.getItem('xrayCode');*/
@@ -19,109 +15,28 @@ document.addEventListener('DOMContentLoaded', function() {
 	let currentPage = 1;
 	let offset = 1;
 	let data = []; // 서버에서 가져온 데이터를 저장할 배열
+	//CAM 실행할 때 필요한 아이들
+	let heatmapActive = false; // Track if heatmap is active
+	let uploadedImage = null;
 	// URL 파라미터에서 ptCode 가져오기
 	const urlParams = new URLSearchParams(window.location.search);
 	const ptCode = urlParams.get('ptCode');
 
 	// xray코드 받아오기
 	let xrayCode = localStorage.getItem('xrayCode');
-	console.log('Initial xrayCode:', xrayCode);
+
+	// localStorage에 `xrayCode`가 있으면 즉시 의견을 업데이트
+	if (xrayCode) {
+		fetchOpinionAndUpdate();
+		loadImageByXrayCode(xrayCode);
+	} else {
+		console.error('localStorage에 xrayCode가 없습니다.');
+	}
 
 
 	console.log('Loaded xrayCode:', xrayCode); // 받아온 값 확인
 	console.log('Received ptCode:', ptCode);
 
-	if (currentPage > 1) {
-		offset = (currentPage - 1) * itemsPerPage;
-	}
-
-
-	// Initial state
-	let isDrawing = false;
-	let startX, startY;
-	let currentTool = 'brush';
-	let selectedColor = '#000000';
-	let selectedSize = 5;
-	let uploadedImage = null;
-	let heatmapActive = false; // Track if heatmap is active
-
-	// Tool selection
-	brushToolButton.addEventListener('click', () => (currentTool = 'brush'));
-	rectangleToolButton.addEventListener(
-		'click',
-		() => (currentTool = 'rectangle')
-	);
-
-	// Update color and size
-	colorPicker.addEventListener(
-		'input',
-		(e) => (selectedColor = e.target.value)
-	);
-	brushSize.addEventListener('input', (e) => (selectedSize = e.target.value));
-
-	// Load an image onto the canvas
-	loadImageBtn.addEventListener('click', () => imageLoader.click());
-
-	imageLoader.addEventListener('change', (e) => {
-		const file = e.target.files[0];
-		const reader = new FileReader();
-
-		reader.onload = (event) => {
-			const img = new Image();
-			img.onload = () => {
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
-				ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-				uploadedImage = img; // Save uploaded image
-			};
-			img.src = event.target.result;
-			loadImageBtn.classList.add('hidden'); // Hide the "이미지 가져오기" button
-		};
-
-		reader.readAsDataURL(file);
-	});
-
-	// Canvas event listeners for drawing
-	canvas.addEventListener('mousedown', (e) => {
-		isDrawing = true;
-		startX = e.offsetX;
-		startY = e.offsetY;
-	});
-
-	canvas.addEventListener('mousemove', (e) => {
-		if (!isDrawing) return;
-
-		if (currentTool === 'brush') {
-			ctx.lineWidth = selectedSize;
-			ctx.lineCap = 'round';
-			ctx.strokeStyle = selectedColor;
-			ctx.beginPath();
-			ctx.moveTo(startX, startY);
-			ctx.lineTo(e.offsetX, e.offsetY);
-			ctx.stroke();
-			startX = e.offsetX;
-			startY = e.offsetY;
-		}
-	});
-
-	canvas.addEventListener('mouseup', (e) => {
-		isDrawing = false;
-
-		if (currentTool === 'rectangle') {
-			const rectWidth = e.offsetX - startX;
-			const rectHeight = e.offsetY - startY;
-			ctx.strokeStyle = selectedColor;
-			ctx.lineWidth = selectedSize;
-			ctx.strokeRect(startX, startY, rectWidth, rectHeight);
-		}
-	});
-
-	// Clear only drawings on the canvas, keep uploaded image
-	clearCanvasButton.addEventListener('click', () => {
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		if (uploadedImage) {
-			ctx.drawImage(uploadedImage, 0, 0, canvas.width, canvas.height); // Redraw uploaded image
-		}
-	});
 
 	// CAM button functionality
 	camButton.addEventListener('click', () => {
@@ -221,18 +136,70 @@ document.addEventListener('DOMContentLoaded', function() {
 		//            patientList.appendChild(listItem);
 		//        });
 	}
+	
+	// xrayCode로 이미지 불러오기 함수
+    function loadImageByXrayCode(xrayCode) {
+        fetch(`/diagnosis/xray/getImage?xrayDate=${encodeURIComponent(xrayCode)}`)
+            .then(response => {
+            if (!response.ok) {
+                throw new Error('이미지를 가져오는 데 실패했습니다.');
+            }
+            return response.blob();
+        })
+        .then(blob => {
+            const imgUrl = URL.createObjectURL(blob);
+            loadImageToCanvas(imgUrl); // Canvas에 이미지를 로드하는 함수 호출
+        })
+        .catch(error => console.error('Error fetching image:', error));
+    }
+	
+	// 이미지 로딩 후 캔버스에 표시
+    function loadImageToCanvas(imgUrl) {
+        const img = new Image();
+        img.crossOrigin = "anonymous"; // CORS 설정 (서버에서 CORS가 허용되는 경우에만 필요)
+        img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            uploadedImage = img;
+        };
+        img.src = imgUrl; // 이미지 경로 설정
+    }
 
 	// 화면 업데이트 함수
 	function updateScreen(imgData) {
 		if (imgData.length > 0) {
+			// imgData 배열의 첫 번째 항목에서 xrayImgPath를 가져옴
+			const xrayImgPath = `/diagnosis/xray/getImage?xrayDate=${encodeURIComponent(imgData[0].xrayCode)}`;
+
 			xrayCode = imgData[0].xrayCode;
 			localStorage.setItem('xrayCode', xrayCode); // localStorage에 저장
 			console.log('Updated xrayCode:', xrayCode);
+			
+			// 이미지 경로가 있으면 Canvas에 이미지를 로드
+        	loadImageToCanvas(xrayImgPath); // HTTP URL로 변환된 경로 사용
+
+			/*// 이미지 경로가 있으면 Canvas에 이미지를 로드
+			if (xrayCode) {
+				const fullPath = `diagnosis/xray/imgDate?ptCode=${encodeURIComponent(ptCode)}&xrayDate=${encodeURIComponent(item.xrayDate)}`;
+            	loadImageToCanvas(xrayCode); 
+			}*/
 
 			// xrayCode를 사용해 서버에서 데이터 가져오기
 			fetchOpinionAndUpdate();
 		}
 	}
+	// 이미지 업로드 이벤트 (input 파일 선택 시 캔버스에 표시)
+    imageLoader.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => loadImageToCanvas(event.target.result);
+        reader.readAsDataURL(file);
+    });
+
+    window.uploadedImage = uploadedImage; // 전역으로 설정하여 2.js에서 접근 가능
+	
 
 	// 페이지네이션 렌더링 함수
 	function renderPagination() {
@@ -285,10 +252,11 @@ document.addEventListener('DOMContentLoaded', function() {
 					if (!response.ok) {
 						throw new Error('의견 데이터를 가져오는 데 실패했습니다.');
 					}
-					return response.text(); // JSON 대신 단순 텍스트 반환 시
+					return response.text(); // JSON 형식으로 반환받음
 				})
 				.then(data => {
-					doctorOpinionTextarea.value = data || "";
+					console.log("Received data from server:", data);
+					doctorOpinionTextarea.value = data || ""; // JSON 내 원하는 값만 추출
 				})
 				.catch(error => {
 					console.error('의사 소견 데이터를 가져오는 중 오류 발생:', error);
