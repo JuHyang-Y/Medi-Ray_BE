@@ -10,6 +10,9 @@ body {
   font-family: 'Pretendard-Regular';
   background-color: #f9fafb;
 }
+
+
+
 .upload-container {
   width: 800px;
   height: 600px;
@@ -66,6 +69,8 @@ body {
   margin: 0 auto;
   background-color: white;
 }
+
+
 
 /* 아코디언 메뉴 스타일 */
 #accordionMenu {

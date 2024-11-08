@@ -122,24 +122,18 @@
             <!-- Canvas Section -->
             <div class="relative flex justify-center">
               <div class="canvas-container relative w-full h-auto max-w-full">
-                <canvas
-                  id="diagnosisCanvas"
-                  class="border border-gray-300 rounded-lg shadow-sm w-full h-full"
-                  width="800"
-                  height="600"
-                ></canvas>
+			  <canvas id="dicomCanvas" class="border border-gray-300 rounded-lg shadow-sm w-full h-full" width="800" height="600"></canvas>
+    		  <canvas id="camCanvas" class="absolute top-0 left-0 w-full h-full" width="800" height="600"></canvas>
+    		  <!-- <canvas id="camCanvas" class="absolute top-0 left-0 w-full h-full pointer-events-none" width="800" height="600"></canvas> -->
+    		  <canvas id="diagnosisCanvas" class="absolute top-0 left-0 w-full h-full" width="800" height="600"></canvas>
+    		  <!-- <canvas id="diagnosisCanvas" class="absolute top-0 left-0 w-full h-full pointer-events-none" width="800" height="600"></canvas> -->
                 <!-- <button
                   id="loadImageBtn"
                   class="absolute top-4 right-4 bg-green-500 hover:bg-green-600 text-white py-1 px-3 md:py-2 md:px-4 rounded-md transition"
                 >
                   이미지 가져오기
                 </button> -->
-                <input
-                  type="file"
-                  id="imageLoader"
-                  class="hidden"
-                  accept="image/*"
-                />
+                <input type="file" id="imageLoader" class="hidden" accept="image/*" />
               </div>
             </div>
           </div>
@@ -219,7 +213,7 @@
     </div>
 
     <script src="/assets/js/xray.js"></script>
-    <script src="/assets/js/canvas.js"></script>
+    <!-- <script src="/assets/js/canvas.js"></script> -->
     <script src="/assets/js/header.js"></script>
     <script>
       document.getElementById('logo').addEventListener('click', function () {
