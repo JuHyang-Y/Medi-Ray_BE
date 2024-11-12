@@ -2,27 +2,34 @@ document.addEventListener('DOMContentLoaded', function() {
 	const canvas = document.getElementById('diagnosisCanvas');
 	const camCanvas = document.getElementById('camCanvas');
 	const dicomCanvas = document.getElementById('dicomCanvas');
-	
+
 	const ctx = canvas.getContext('2d');
 	const camCtx = camCanvas.getContext('2d'); // CAM 전용 canvas context
 	const dicomCtx = dicomCanvas.getContext('2d'); // DICOM 전용 canvas context
-	
+
 	let uploadedImage = null; // DICOM 이미지를 저장할 변수
-	let tempCanvas = document.createElement('canvas');
-	let tempCtx = tempCanvas.getContext('2d');
-	
+
+
+	// 초기 캔버스 크기 저장
+	let canvasWidth = canvas.width;
+	let canvasHeight = canvas.height;
+
+	// 이전 캔버스 크기 저장
+	let prevCanvasWidth = canvasWidth;
+	let prevCanvasHeight = canvasHeight;
+
 	// Canvas
 	const brushToolButton = document.getElementById('brushTool');
 	const rectangleToolButton = document.getElementById('rectangleTool');
 	const clearCanvasButton = document.getElementById('clearCanvas');
 	const colorPicker = document.getElementById('colorPicker');
 	const brushSize = document.getElementById('brushSize');
-	
+
 	// Cam, dicom
+	const diagnosisResults = document.getElementById('diagnosisResults').querySelector('ul');
 	const camButton = document.getElementById('camButton'); // New CAM button
 	/*const loadImageBtn = document.getElementById('loadImageBtn');*/
 	const imageLoader = document.getElementById('imageLoader');
-	const diagnosisResults = document.getElementById('diagnosisResults');
 	/*const xrayCode = localStorage.getItem('xrayCode');*/
 	const doctorOpinionTextarea = document.querySelector('textarea[placeholder="의사 소견 입력"]');
 	const saveButton = document.getElementById('opSubmit'); // 저장 버튼 선택
@@ -30,27 +37,28 @@ document.addEventListener('DOMContentLoaded', function() {
 	const itemsPerPage = 3; // 한 페이지에 표시할 항목 수
 	let currentPage = 1;
 	let data = []; // 서버에서 가져온 데이터를 저장할 배열
-	
+
 	//CAM 실행할 때 필요한 아이들
 	let heatmapActive = false; // Track if heatmap is active
-	
+
 	// Canvas 실행할 때 필요한 아이들
 	let isDrawing = false;
 	let startX, startY;
 	let currentTool = 'brush';
 	let selectedColor = '#000000';
 	let selectedSize = 5;
-	
+
 	// URL 파라미터에서 ptCode 가져오기
 	const urlParams = new URLSearchParams(window.location.search);
 	const ptCode = urlParams.get('ptCode');
 	// xray코드 받아오기
 	let xrayCode = localStorage.getItem('xrayCode');
+	console.log('canvas.width' + canvas.width)
 
 	// localStorage에 `xrayCode`가 있으면 즉시 의견을 업데이트
 	if (xrayCode) {
 		fetchOpinionAndUpdate();
-		const xrayImgPath = `/diagnosis/xray/getImage?xrayDate=${encodeURIComponent(xrayCode)}`;
+		const xrayImgPath = `/diagnosis/xray/getImage?xrayCode=${encodeURIComponent(xrayCode)}`;
 		loadImageToCanvas(xrayImgPath);
 		/*loadImageByXrayCode(xrayCode);*/
 	} else {
@@ -64,44 +72,46 @@ document.addEventListener('DOMContentLoaded', function() {
 	// Canvas API
 	// 화면 크기에 맞게 캔버스를 리사이즈하는 함수
 	function resizeCanvas() {
-	    /*const container = dicomCanvas.parentElement;
-        const aspectRatio = uploadedImage ? uploadedImage.width / uploadedImage.height : 1;
-        
-        dicomCanvas.width = container.clientWidth;
-        dicomCanvas.height = dicomCanvas.width / aspectRatio;
-        
-        canvas.width = dicomCanvas.width;
-        canvas.height = dicomCanvas.height;
-        
-        camCanvas.width = dicomCanvas.width;
-        camCanvas.height = dicomCanvas.height;
-        
-        drawDicomImage();*/
-        const containerWidth = canvas.parentElement.clientWidth;
-	    const containerHeight = canvas.parentElement.clientHeight;
-	
-	    // 현재 내용을 저장
-	    const tempCanvas = document.createElement('canvas');
-	    tempCanvas.width = canvas.width;
-	    tempCanvas.height = canvas.height;
-	    tempCanvas.getContext('2d').drawImage(dicomCanvas, 0, 0);
-	
-	    // HTML 요소의 너비와 높이에 맞추어 캔버스 크기 조정
-	    canvas.width = containerWidth;
-	    canvas.height = containerHeight;
-	    camCanvas.width = containerWidth;
-	    camCanvas.height = containerHeight;
-	    dicomCanvas.width = containerWidth;
-	    dicomCanvas.height = containerHeight;
-	  }
-	
+		/*const container = dicomCanvas.parentElement;
+		const aspectRatio = uploadedImage ? uploadedImage.width / uploadedImage.height : 1;
+	    
+		dicomCanvas.width = container.clientWidth;
+		dicomCanvas.height = dicomCanvas.width / aspectRatio;
+	    
+		canvas.width = dicomCanvas.width;
+		canvas.height = dicomCanvas.height;
+	    
+		camCanvas.width = dicomCanvas.width;
+		camCanvas.height = dicomCanvas.height;
+	    
+		drawDicomImage();*/
+		scaleCanvasContent();
+		const containerWidth = canvas.parentElement.clientWidth;
+		const containerHeight = canvas.parentElement.clientHeight;
+
+		// 현재 내용을 저장
+		const tempCanvas = document.createElement('canvas');
+		tempCanvas.width = canvas.width;
+		tempCanvas.height = canvas.height;
+		tempCanvas.getContext('2d').drawImage(dicomCanvas, 0, 0);
+
+		// HTML 요소의 너비와 높이에 맞추어 캔버스 크기 조정
+		canvas.width = containerWidth;
+		canvas.height = containerHeight;
+		camCanvas.width = containerWidth;
+		camCanvas.height = containerHeight;
+		dicomCanvas.width = containerWidth;
+		dicomCanvas.height = containerHeight;
+	}
+
 	// 창 크기가 변경될 때마다 캔버스를 리사이즈
 	window.addEventListener('resize', resizeCanvas);
 	resizeCanvas(); // 초기 로딩 시 한 번 호출
-  
+	scaleCanvasContent();
+
 	// Tool selection
 	brushToolButton.addEventListener('click', () => (currentTool = 'brush'));
-	rectangleToolButton.addEventListener('click',() => (currentTool = 'rectangle'));
+	rectangleToolButton.addEventListener('click', () => (currentTool = 'rectangle'));
 
 	// Update color and size
 	colorPicker.addEventListener('input', (e) => (selectedColor = e.target.value));
@@ -146,12 +156,15 @@ document.addEventListener('DOMContentLoaded', function() {
 			ctx.moveTo(startX, startY);
 			ctx.lineTo(e.offsetX, e.offsetY);
 			ctx.stroke();
+			//	ctx.save()
+			scaleCanvasContent();
 			startX = e.offsetX;
 			startY = e.offsetY;
 		}
 	});
 
 	canvas.addEventListener('mouseup', (e) => {
+		scaleCanvasContent();
 		isDrawing = false;
 
 		if (currentTool === 'rectangle') {
@@ -165,16 +178,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// Clear only drawings on the canvas, keep uploaded image
 	// Clear 버튼 기능: 드로잉 및 CAM만 지우고 DICOM 이미지는 유지
-    document.getElementById('clearCanvas').addEventListener('click', () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        /*camCtx.clearRect(0, 0, camCanvas.width, camCanvas.height);
-        if (uploadedImage) {
-            dicomCtx.drawImage(uploadedImage, 0, 0, dicomCanvas.width, dicomCanvas.height); // DICOM 이미지 복원
-        }*/
-        drawDicomImage(); // Reset DICOM image on clear
-    });
-    
-    
+	document.getElementById('clearCanvas').addEventListener('click', () => {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		/*camCtx.clearRect(0, 0, camCanvas.width, camCanvas.height);
+		if (uploadedImage) {
+			dicomCtx.drawImage(uploadedImage, 0, 0, dicomCanvas.width, dicomCanvas.height); // DICOM 이미지 복원
+		}*/
+		drawDicomImage(); // Reset DICOM image on clear
+	});
+
+
 	// CAM button functionality
 	document.getElementById('camButton').addEventListener('click', () => {
 		heatmapActive = !heatmapActive;
@@ -271,86 +284,122 @@ document.addEventListener('DOMContentLoaded', function() {
 		//            patientList.appendChild(listItem);
 		//        });
 	}
-	
+
 	/*// xrayCode로 이미지 불러오기 함수
-    function loadImageByXrayCode(xrayCode) {
-        fetch(`/diagnosis/xray/getImage?xrayDate=${encodeURIComponent(xrayCode)}`)
-            .then(response => {
-            if (!response.ok) {
-                throw new Error('이미지를 가져오는 데 실패했습니다.');
-            }
-            return response.blob();
-        })
-        .then(blob => {
-            const imgUrl = URL.createObjectURL(blob);
-            loadImageToCanvas(imgUrl); // Canvas에 이미지를 로드하는 함수 호출
-        })
-        .catch(error => console.error('Error fetching image:', error));
-    }*/
-	
+	function loadImageByXrayCode(xrayCode) {
+		fetch(`/diagnosis/xray/getImage?xrayDate=${encodeURIComponent(xrayCode)}`)
+			.then(response => {
+			if (!response.ok) {
+				throw new Error('이미지를 가져오는 데 실패했습니다.');
+			}
+			return response.blob();
+		})
+		.then(blob => {
+			const imgUrl = URL.createObjectURL(blob);
+			loadImageToCanvas(imgUrl); // Canvas에 이미지를 로드하는 함수 호출
+		})
+		.catch(error => console.error('Error fetching image:', error));
+	}*/
+
 	// 이미지 로딩 후 캔버스에 표시
-    function loadImageToCanvas(imgUrl) {
-        const img = new Image();
-        img.crossOrigin = "anonymous"; // CORS 설정 (서버에서 CORS가 허용되는 경우에만 필요)
-        img.onload = () => {
-            uploadedImage = img;
-			resizeCanvas(); // 최초 로드 시 canvas 조정
-        };
-        img.src = imgUrl; // 이미지 경로 설정
-    }
-    
-    function resizeCanvas() {
-        const container = dicomCanvas.parentElement;
-		const aspectRatio = uploadedImage ? uploadedImage.width / uploadedImage.height : 1;
+	function loadImageToCanvas(imgUrl) {
+		const img = new Image();
+		img.crossOrigin = "anonymous"; // CORS 설정 (서버에서 CORS가 허용되는 경우에만 필요)
+		img.onload = () => {
+			uploadedImage = img;
+			drawDicomImage(); // 이미지 다시 그리기
+			adjustCanvasSize(); // 이미지 로드 후 canvas 크기 조정
+		};
+		img.src = imgUrl; // 이미지 경로 설정
+	}
 
-		// 컨테이너에 맞춰 dicomCanvas와 다른 캔버스 크기 조정
-		dicomCanvas.width = container.clientWidth;
-		dicomCanvas.height = dicomCanvas.width / aspectRatio;
-		
-		canvas.width = dicomCanvas.width;
-		canvas.height = dicomCanvas.height;
+	// DICOM 비율에 맞춰 Canvas 크기 조정
+	function adjustCanvasSize() {
+		if (uploadedImage) {
+			const aspectRatio = uploadedImage.width / uploadedImage.height;
 
-		camCanvas.width = dicomCanvas.width;
-		camCanvas.height = dicomCanvas.height;
+			// 이전 캔버스 크기 저장
+			prevCanvasWidth = canvasWidth;
+			prevCanvasHeight = canvasHeight;
 
-		drawDicomImage(); // 이미지 그리기
-    }
-    
-    function drawDicomImage() {
-        if (uploadedImage) {
-            const scaleFactor = Math.min(
-                dicomCanvas.width / uploadedImage.width,
-                dicomCanvas.height / uploadedImage.height
-            );
-            const newWidth = uploadedImage.width * scaleFactor;
-            const newHeight = uploadedImage.height * scaleFactor;
-            const offsetX = (dicomCanvas.width - newWidth) / 2;
-            const offsetY = (dicomCanvas.height - newHeight) / 2;
+			// DICOM Canvas 비율 조정
+			dicomCanvas.width = dicomCanvas.parentElement.clientWidth;
+			dicomCanvas.height = dicomCanvas.width / aspectRatio;
 
-            dicomCtx.clearRect(0, 0, dicomCanvas.width, dicomCanvas.height);
-            dicomCtx.drawImage(uploadedImage, offsetX, offsetY, newWidth, newHeight);
-        }
-    }
-     window.addEventListener('resize', resizeCanvas);
-     resizeCanvas();
+			// 다른 캔버스 크기도 동기화
+			canvas.width = dicomCanvas.width;
+			canvas.height = dicomCanvas.height;
+
+			camCanvas.width = dicomCanvas.width;
+			camCanvas.height = dicomCanvas.height;
+
+			// 새로운 캔버스 크기 저장
+			canvasWidth = canvas.width;
+			canvasHeight = canvas.height;
+
+			// DICOM 이미지를 먼저 그리고 기존 그림을 복원
+			drawDicomImage();
+			// restoreDrawings(); // 기존 그림 복원
+		}
+	}
+
+	// 기존의 그린 내용을 스케일링하여 복원
+	function scaleCanvasContent() {
+		// 이전 크기의 캔버스 내용을 이미지로 저장
+		const savedDrawing = new Image();
+		savedDrawing.src = canvas.toDataURL();
+
+		// Canvas 초기화
+		// ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+		savedDrawing.onload = function() {
+			ctx.save();
+			console.log('dd')
+			ctx.scale(canvasWidth / prevCanvasWidth, canvasHeight / prevCanvasHeight);
+			ctx.drawImage(savedDrawing, 0, 0);
+			ctx.restore();
+		};
+	}
+
+	function drawDicomImage() {
+		if (uploadedImage) {
+			const scaleFactor = Math.min(
+				dicomCanvas.width / uploadedImage.width,
+				dicomCanvas.height / uploadedImage.height
+			);
+			const newWidth = uploadedImage.width * scaleFactor;
+			const newHeight = uploadedImage.height * scaleFactor;
+			const offsetX = (dicomCanvas.width - newWidth) / 2;
+			const offsetY = (dicomCanvas.height - newHeight) / 2;
+
+			dicomCtx.clearRect(0, 0, dicomCanvas.width, dicomCanvas.height);
+			dicomCtx.drawImage(uploadedImage, offsetX, offsetY, newWidth, newHeight);
+		}
+	}
+	// 창 크기 변경 시 리사이즈와 복원 함수 호출
+	window.addEventListener('resize', adjustCanvasSize);
+
+	// 초기 설정
+	adjustCanvasSize();
+	ctx.restore()
 
 	// 화면 업데이트 함수
 	function updateScreen(imgData) {
 		if (imgData.length > 0) {
 			// imgData 배열의 첫 번째 항목에서 xrayImgPath를 가져옴
-			const xrayImgPath = `/diagnosis/xray/getImage?xrayDate=${encodeURIComponent(imgData[0].xrayCode)}`;
+			const xrayImgPath = `/diagnosis/xray/getImage?xrayCode=${encodeURIComponent(xrayCode)}`;
 
 			xrayCode = imgData[0].xrayCode;
 			localStorage.setItem('xrayCode', xrayCode); // localStorage에 저장
 			console.log('Updated xrayCode:', xrayCode);
-			
+
 			// 이미지 경로가 있으면 Canvas에 이미지를 로드
-        	loadImageToCanvas(xrayImgPath); // HTTP URL로 변환된 경로 사용
+			loadImageToCanvas(xrayImgPath); // HTTP URL로 변환된 경로 사용
 
 			/*// 이미지 경로가 있으면 Canvas에 이미지를 로드
 			if (xrayCode) {
 				const fullPath = `diagnosis/xray/imgDate?ptCode=${encodeURIComponent(ptCode)}&xrayDate=${encodeURIComponent(item.xrayDate)}`;
-            	loadImageToCanvas(xrayCode); 
+				loadImageToCanvas(xrayCode); 
 			}*/
 
 			// xrayCode를 사용해 서버에서 데이터 가져오기
@@ -358,17 +407,17 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	}
 	// 이미지 업로드 이벤트 (input 파일 선택 시 캔버스에 표시)
-    imageLoader.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+	imageLoader.addEventListener('change', (e) => {
+		const file = e.target.files[0];
+		if (!file) return;
 
-        const reader = new FileReader();
-        reader.onload = (event) => loadImageToCanvas(event.target.result);
-        reader.readAsDataURL(file);
-    });
+		const reader = new FileReader();
+		reader.onload = (event) => loadImageToCanvas(event.target.result);
+		reader.readAsDataURL(file);
+	});
 
-    window.uploadedImage = uploadedImage; // 전역으로 설정하여 2.js에서 접근 가능
-	
+	window.uploadedImage = uploadedImage; // 전역으로 설정하여 2.js에서 접근 가능
+
 
 	// 페이지네이션 렌더링 함수
 	function renderPagination() {
@@ -394,21 +443,49 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 	// Sample data for "촬영 리스트", "병변 예측 결과", and "의사 소견란"
 
-	const resultsData = [
+	/*const resultsData = [
 		{ name: 'Atelectasis', value: '87%' },
 		{ name: 'Consolidation', value: '76%' },
 		{ name: 'Lung Lesion', value: '72%' },
 		{ name: 'Pneumonia', value: '67%' },
 		{ name: 'Pleural Other', value: '55%' },
-	];
+	];*/
 
-	// Display results dynamically
-	resultsData.forEach((result) => {
-		const div = document.createElement('div');
-		div.classList.add('flex', 'justify-between');
-		div.innerHTML = `<span>${result.name}</span><span class="font-semibold">${result.value}</span>`;
-		diagnosisResults.appendChild(div);
-	});
+	// 서버에 xrayCode를 쿼리 파라미터로 전달하여 /xray/result 엔드포인트에서 데이터를 가져옴
+	fetch(`/diagnosis/xray/result?xrayCode=${encodeURIComponent(xrayCode)}`)
+		.then(response => response.json()) // JSON 형식으로 응답을 파싱
+		.then(data => {
+			console.log("받는 값:", data); // 응답 데이터 확인
+			// 결과 데이터가 없을 경우 Normal 표시
+	        if (data.length === 0) {
+	            data = [{ name: "Normal", value: "" }];
+	        } else {
+	            // 데이터가 있을 경우, 확률 값을 포맷
+	            data = data.map(item => ({
+	                name: item.labelName,
+	                value: `${item.probability.toFixed(1)}%`
+	            }));
+	        }
+			
+			// diagnosisResults 요소의 기존 내용을 제거
+        	diagnosisResults.innerHTML = "";
+
+			// 변환된 resultsData 배열을 반복하여 HTML에 동적 요소 추가
+			data.forEach(result => {
+				// div 요소 생성하여 각각의 결과를 표시할 준비
+				const div = document.createElement('div');
+				div.classList.add('flex', 'justify-between'); // CSS 클래스 추가하여 요소 스타일링
+
+				// div의 innerHTML을 설정하여 라벨 이름과 확률 값을 포함한 HTML 텍스트 추가
+				div.innerHTML = `<span>${result.name}</span><span class="font-semibold">${result.value}</span>`;
+
+				// diagnosisResults 요소에 div를 추가하여 화면에 결과를 표시
+				diagnosisResults.appendChild(div);
+			});
+		})
+		// 에러 발생 시 콘솔에 오류 메시지 출력
+		.catch(error => console.error('Error fetching label probabilities:', error));
+
 
 	// 서버에서 xrayCode로 데이터 가져오기
 	function fetchOpinionAndUpdate() {

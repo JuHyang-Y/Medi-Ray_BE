@@ -16,6 +16,7 @@ public class ResultTb {
 	private double fractureProb;
 	private double lungLesionProb;
 	private double lungOpacityProb;
+	private double noFindingProb;
 	private double pleuralEffusionProb;
 	private double pneumoniaProb;
 	private double pneumothoraxProb;

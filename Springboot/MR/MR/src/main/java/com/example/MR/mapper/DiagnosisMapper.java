@@ -17,6 +17,10 @@ public interface DiagnosisMapper {
 	@Insert("INSERT INTO IMG_TB(XRAY_CODE, PT_CODE, XRAY_DATE, XRAY_IMG_PATH, DT_CODE) "
 			+ "VALUES (#{xrayCode}, #{ptCode}, Current_timestamp, #{xrayImgPath}, #{dtCode})")
 	public void imgUpload(ImgTb it);
+	// 모델 진단 결과도 같이 업로드
+	@Insert("INSERT INTO RESULT_TB(XRAY_CODE, PT_CODE, ATELECTASIS_PROB, CARDIOMEGALY_PROB, CONSOLIDATION_PROB, EDEMA_PROB, ENLARGED_CARDIO_PROB, FRACTURE_PROB, LUNG_LESION_PROB, LUNG_OPACITY_PROB, NO_FIND_PROB, PLEURAL_EFFUSION_PROB, PNEUMONIA_PROB, PNEUMOTHORAX_PROB, PLEURAL_OTHER_PROB, OTHER_PROB) "
+			+ "VALUES (#{xrayCode}, #{ptCode}, #{atelectasisProb}, #{cardiomegalyProb}, #{consolidationProb}, #{edemaProb}, #{enargedCardioProb}, #{fractureProb}, #{lungLesionProb}, #{lungOpacityProb}, #{noFindingProb}, #{pleuralEffusionProb}, #{pneumoniaProb}, #{pneumothoraxProb}, #{pleuralOtherProb}, #{otherProb})")
+	public void imgReult(ResultTb rt);
 
 	// 의사진단입력란(값이 존재하는지 확인)
 	@Select("SELECT DT_OPINION FROM IMG_TB WHERE XRAY_CODE = #{xrayCode}")
@@ -38,9 +42,8 @@ public interface DiagnosisMapper {
 	public ArrayList<ImgTb> imgDate(@Param("ptCode") String ptCode, @Param("xrayDate") String xrayDate);
 
 	// 다이콤에 대한 결과 반환
-	@Select("SELECT * FROM RESULT_TB r " 
-			+ "JOIN IMG_TB i ON r.PT_CODE = i.PT_CODE "
-			+ "WHERE i.XRAY_CODE = #{xray_code}")
-	public ArrayList<ResultTb> resultList(String xray_code);
+	@Select("SELECT * FROM RESULT_TB "
+			+ "WHERE XRAY_CODE = #{xrayCode}") 
+	public ArrayList<ResultTb> resultList(String xrayCode);
 
 }

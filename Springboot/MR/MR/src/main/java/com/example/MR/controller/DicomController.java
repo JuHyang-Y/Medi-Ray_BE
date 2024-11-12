@@ -77,6 +77,7 @@ public class DicomController {
         String dtName = mapper.DtName(ptCode);
         return Map.of("dtName", dtName);
     }
+    
 
     @PostMapping("/imgupload")
     public ResponseEntity<String> savePngFile(@RequestParam("image") String base64Image, @RequestParam("ptCode") String ptCode, @RequestParam("fileName") String fileName) {
@@ -86,7 +87,7 @@ public class DicomController {
             byte[] imageBytes = Base64.getDecoder().decode(base64Data);
 
             // 파일 경로 설정 및 저장
-            String uploadDir = "C:\\Users\\USER\\dicom"; // 실제 경로로 변경
+            String uploadDir = "C:\\Users\\USER\\dicom\\" + ptCode; // 실제 경로로 변경
             File dir = new File(uploadDir);
             if (!dir.exists()) {
                 dir.mkdirs(); // 디렉토리가 없으면 생성
