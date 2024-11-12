@@ -17,13 +17,12 @@ from starlette.responses import RedirectResponse
 from typing import Dict
 
 import torch
-import torchvision
-from model import ModelLoader
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
+from fastapi import FastAPI, File, UploadFile
+#from model import ModelLoader
+from PIL import Image
 
 app = FastAPI()
-model_loader = ModelLoader("models/best.pth.tar")
+#model = models.resnet50() # 모델 초기화
 
 # 허용할 출처 설정
 origins = [
@@ -53,7 +52,6 @@ class DetectionResult(BaseModel):
     message: str       # 처리 결과 메시지
     image: str         # base64로 인코딩된 이미지 데이터
     metadata: Dict     # DICOM 메타데이터 (환자 정보 등)
-    model_result : Dict
 
 # DICOM 파일을 처리하여 JSON 형식으로 반환하는 함수
 def process_dicom_to_json(dicom_path, image_size=512):
@@ -104,29 +102,12 @@ def process_dicom_to_json(dicom_path, image_size=512):
             "image_base64": img_base64  # Base64로 인코딩된 이미지 데이터
         }
 
-        return result, img_pil # img_pil 반환
+        return result
 
     except Exception as e:
         # 오류 발생 시 로그에 남기고 None 반환
         logging.error(f"Error processing {dicom_path}: {str(e)}")
-        return None, None
-
-
-# albumentations를 이용한 preprocess_image 함수
-def preprocess_image(image):
-    # albumentations 전처리 파이프라인 구성
-    transform = A.Compose([
-        A.Resize(224, 224),  # 이미지 크기를 224x224로 조정
-        A.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),  # 정규화
-        ToTensorV2()  # 이미지를 텐서로 변환
-    ])
-
-    # PIL 이미지를 numpy 배열로 변환 후 전처리 적용
-    image_np = np.array(image)  # PIL 이미지를 numpy로 변환
-    transformed = transform(image=image_np)  # 전처리 적용
-    input_tensor = transformed['image'].unsqueeze(0)  # 배치 차원 추가
-
-    return input_tensor
+        return None
 
 
 # DICOM 파일 업로드 및 처리 엔드포인트 정의
@@ -144,32 +125,21 @@ async def process_dicom(file: UploadFile):
         tmp_file.write(contents)         # 임시 파일에 내용을 씀
         tmp_file_path = tmp_file.name    # 임시 파일의 경로 저장
 
-    # DICOM 파일을 전처리하여 결과 얻기
-    result, img_pil = process_dicom_to_json(tmp_file_path)
+    # DICOM 파일을 처리하여 결과 얻기
+    result = process_dicom_to_json(tmp_file_path)
 
-    if result and img_pil:
-        # img_pil을 전처리하여 모델 입력 생성
-        input_tensor = preprocess_image(img_pil)  # 전처리 적용
-
-        # 모델 예측
-        with torch.no_grad():
-            prediction = model_loader.predict(input_tensor)
-
-        # 후처리하여 결과 반환
-        # model_result = postprocess_output(prediction)  # 후처리 함수는 사용자가 정의해야 합니다.
-
+    if result:
         return DetectionResult(
-            message="처리가 완료되었습니다.",
-            image=result['image_base64'],
-            metadata=result['metadata'],
-            model_result=model_result
+            message="처리가 완료되었습니다.",  # 처리 완료 메시지
+            image=result['image_base64'],    # base64로 인코딩된 이미지 데이터
+            metadata=result['metadata']      # 추출된 메타데이터
         )
     else:
+        # 처리 실패 시 오류 메시지 반환
         return DetectionResult(
             message="DICOM 파일을 처리하는 중 오류가 발생했습니다.",
             image="",
-            metadata={},
-            model_result={}
+            metadata={}
         )
 
 # uvicorn으로 이 모듈을 직접 실행할 때 서버를 구동하기 위한 코드
