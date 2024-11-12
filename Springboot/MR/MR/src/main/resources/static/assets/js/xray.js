@@ -21,13 +21,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	// Canvas
 	const brushToolButton = document.getElementById('brushTool');
 	const rectangleToolButton = document.getElementById('rectangleTool');
-	const clearCanvasButton = document.getElementById('clearCanvas');
 	const colorPicker = document.getElementById('colorPicker');
 	const brushSize = document.getElementById('brushSize');
 
 	// Cam, dicom
-	const diagnosisResults = document.getElementById('diagnosisResults').querySelector('ul');
-	const camButton = document.getElementById('camButton'); // New CAM button
 	/*const loadImageBtn = document.getElementById('loadImageBtn');*/
 	const imageLoader = document.getElementById('imageLoader');
 	/*const xrayCode = localStorage.getItem('xrayCode');*/
@@ -51,13 +48,14 @@ document.addEventListener('DOMContentLoaded', function() {
 	// URL 파라미터에서 ptCode 가져오기
 	const urlParams = new URLSearchParams(window.location.search);
 	const ptCode = urlParams.get('ptCode');
-	// xray코드 받아오기
 	let xrayCode = localStorage.getItem('xrayCode');
-	console.log('canvas.width' + canvas.width)
+	
 
 	// localStorage에 `xrayCode`가 있으면 즉시 의견을 업데이트
 	if (xrayCode) {
 		fetchOpinionAndUpdate();
+		// 페이지가 변경될 때마다 호출 (예: xrayCode가 바뀔 때마다 호출)
+		fetchDiagnosisResults(xrayCode);
 		const xrayImgPath = `/diagnosis/xray/getImage?xrayCode=${encodeURIComponent(xrayCode)}`;
 		loadImageToCanvas(xrayImgPath);
 		/*loadImageByXrayCode(xrayCode);*/
@@ -72,19 +70,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	// Canvas API
 	// 화면 크기에 맞게 캔버스를 리사이즈하는 함수
 	function resizeCanvas() {
-		/*const container = dicomCanvas.parentElement;
-		const aspectRatio = uploadedImage ? uploadedImage.width / uploadedImage.height : 1;
-	    
-		dicomCanvas.width = container.clientWidth;
-		dicomCanvas.height = dicomCanvas.width / aspectRatio;
-	    
-		canvas.width = dicomCanvas.width;
-		canvas.height = dicomCanvas.height;
-	    
-		camCanvas.width = dicomCanvas.width;
-		camCanvas.height = dicomCanvas.height;
-	    
-		drawDicomImage();*/
 		scaleCanvasContent();
 		const containerWidth = canvas.parentElement.clientWidth;
 		const containerHeight = canvas.parentElement.clientHeight;
@@ -117,27 +102,6 @@ document.addEventListener('DOMContentLoaded', function() {
 	colorPicker.addEventListener('input', (e) => (selectedColor = e.target.value));
 	brushSize.addEventListener('input', (e) => (selectedSize = e.target.value));
 
-	// Load an image onto the canvas
-	/*loadImageBtn.addEventListener('click', () => imageLoader.click());
-
-	imageLoader.addEventListener('change', (e) => {
-		const file = e.target.files[0];
-		if (!file) return;
-		
-		const reader = new FileReader();
-		reader.onload = (event) => {
-			const img = new Image();
-			img.onload = () => {
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
-				ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-				uploadedImage = img; // Save uploaded image
-			};
-			img.src = event.target.result;
-		};
-
-		reader.readAsDataURL(file);
-	});*/
-
 	// Canvas event listeners for drawing
 	canvas.addEventListener('mousedown', (e) => {
 		isDrawing = true;
@@ -156,15 +120,14 @@ document.addEventListener('DOMContentLoaded', function() {
 			ctx.moveTo(startX, startY);
 			ctx.lineTo(e.offsetX, e.offsetY);
 			ctx.stroke();
-			//	ctx.save()
-			scaleCanvasContent();
 			startX = e.offsetX;
 			startY = e.offsetY;
+			
 		}
 	});
 
 	canvas.addEventListener('mouseup', (e) => {
-		scaleCanvasContent();
+		e.preventDefault();
 		isDrawing = false;
 
 		if (currentTool === 'rectangle') {
@@ -180,11 +143,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	// Clear 버튼 기능: 드로잉 및 CAM만 지우고 DICOM 이미지는 유지
 	document.getElementById('clearCanvas').addEventListener('click', () => {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
-		/*camCtx.clearRect(0, 0, camCanvas.width, camCanvas.height);
-		if (uploadedImage) {
-			dicomCtx.drawImage(uploadedImage, 0, 0, dicomCanvas.width, dicomCanvas.height); // DICOM 이미지 복원
-		}*/
 		drawDicomImage(); // Reset DICOM image on clear
+		ctx.restore();
 	});
 
 
@@ -220,11 +180,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		camCtx.globalAlpha = 1.0; // Reset transparency
 	}
 
-	/*	const patientData = [
-		{ code: '24.10.21.14:20' },
-		{ code: '24.10.19.15:35' },
-		{ code: '24.10.12.17:15' },
-	];*/
 
 	// 촬영 리스트 데이터 가져오기
 	fetch(`/diagnosis/xray/dateList?ptCode=${encodeURIComponent(ptCode)}`)
@@ -268,38 +223,21 @@ document.addEventListener('DOMContentLoaded', function() {
 					.then(imgData => {
 						console.log("Received data:", imgData); // 받은 데이터를 콘솔에 출력
 						updateScreen(imgData); // 화면에 데이터 업데이트
-						// 원하는 방식으로 받은 데이터를 처리
+						localStorage.setItem('xrayCode', xrayCode); // localStorage에 새로운 xrayCode 저장
+
+	                    // 선택된 xrayCode에 맞는 이미지와 의견 업데이트
+	                    updateScreen(imgData); 
+	                    fetchOpinionAndUpdate(); // 의견 업데이트
+	                    // 페이지가 변경될 때마다 호출 (예: xrayCode가 바뀔 때마다 호출)
+						fetchDiagnosisResults(xrayCode);
+
 					})
 					.catch(error => console.error('Error fetching imgDate data:', error));
+					
 			};
 		});
-		//		console.log("renderPage",data)
-		//        itemsToDisplay.forEach(item => {
-		//            const listItem = document.createElement('li');
-		//            listItem.innerHTML = `
-		//                <button class="text-blue-500 hover:text-blue-700 transition">
-		//                    ${item.xrayDate}
-		//                </button>
-		//            `;
-		//            patientList.appendChild(listItem);
-		//        });
 	}
 
-	/*// xrayCode로 이미지 불러오기 함수
-	function loadImageByXrayCode(xrayCode) {
-		fetch(`/diagnosis/xray/getImage?xrayDate=${encodeURIComponent(xrayCode)}`)
-			.then(response => {
-			if (!response.ok) {
-				throw new Error('이미지를 가져오는 데 실패했습니다.');
-			}
-			return response.blob();
-		})
-		.then(blob => {
-			const imgUrl = URL.createObjectURL(blob);
-			loadImageToCanvas(imgUrl); // Canvas에 이미지를 로드하는 함수 호출
-		})
-		.catch(error => console.error('Error fetching image:', error));
-	}*/
 
 	// 이미지 로딩 후 캔버스에 표시
 	function loadImageToCanvas(imgUrl) {
@@ -354,7 +292,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		savedDrawing.onload = function() {
 			ctx.save();
-			console.log('dd')
 			ctx.scale(canvasWidth / prevCanvasWidth, canvasHeight / prevCanvasHeight);
 			ctx.drawImage(savedDrawing, 0, 0);
 			ctx.restore();
@@ -381,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// 초기 설정
 	adjustCanvasSize();
-	ctx.restore()
+	// ctx.restore()
 
 	// 화면 업데이트 함수
 	function updateScreen(imgData) {
@@ -396,14 +333,11 @@ document.addEventListener('DOMContentLoaded', function() {
 			// 이미지 경로가 있으면 Canvas에 이미지를 로드
 			loadImageToCanvas(xrayImgPath); // HTTP URL로 변환된 경로 사용
 
-			/*// 이미지 경로가 있으면 Canvas에 이미지를 로드
-			if (xrayCode) {
-				const fullPath = `diagnosis/xray/imgDate?ptCode=${encodeURIComponent(ptCode)}&xrayDate=${encodeURIComponent(item.xrayDate)}`;
-				loadImageToCanvas(xrayCode); 
-			}*/
-
 			// xrayCode를 사용해 서버에서 데이터 가져오기
 			fetchOpinionAndUpdate();
+			// 페이지가 변경될 때마다 호출 (예: xrayCode가 바뀔 때마다 호출)
+			fetchDiagnosisResults(xrayCode);
+
 		}
 	}
 	// 이미지 업로드 이벤트 (input 파일 선택 시 캔버스에 표시)
@@ -441,50 +375,55 @@ document.addEventListener('DOMContentLoaded', function() {
 			paginationContainer.appendChild(pageButton);
 		}
 	}
-	// Sample data for "촬영 리스트", "병변 예측 결과", and "의사 소견란"
 
-	/*const resultsData = [
-		{ name: 'Atelectasis', value: '87%' },
-		{ name: 'Consolidation', value: '76%' },
-		{ name: 'Lung Lesion', value: '72%' },
-		{ name: 'Pneumonia', value: '67%' },
-		{ name: 'Pleural Other', value: '55%' },
-	];*/
+	// xrayCode에 맞는 진단 결과를 불러와서 화면에 표시하는 함수
+	function fetchDiagnosisResults(xrayCode) {
+		const diagnosisResults = document.getElementById('diagnosisResults');
+	    const ul = diagnosisResults.querySelector('ul');
+	    const maxLiCount = 4; // 고정된 li 개수 설정
+	    // 서버에 xrayCode를 쿼리 파라미터로 전달하여 /xray/result 엔드포인트에서 데이터를 가져옴
+	    fetch(`/diagnosis/xray/result?xrayCode=${encodeURIComponent(xrayCode)}`)
+	        .then(response => response.json()) // JSON 형식으로 응답을 파싱
+	        .then(data => {
+	            console.log("받는 값:", data); // 응답 데이터 확인
+	
+	            // 결과 데이터가 없을 경우 Normal 표시
+	            if (data.length === 0) {
+	                data = [{ name: "Normal", value: "" }];
+	            } else {
+	                // 데이터가 있을 경우, 확률 값을 포맷
+	                data = data.map(item => ({
+	                    name: item.labelName,
+	                    value: `${item.probability.toFixed(1)}%`
+	                }));
+	            }
+	            
+	            // 데이터가 4개 미만일 경우, 빈 항목으로 채우기
+	            while (data.length < maxLiCount) {
+	                data.push({ name: " ", value: " " });
+	                
+	            }
+	
+	            // diagnosisResults 요소의 <ul> 내 기존 내용을 제거
+	            ul.innerHTML = "";
+	
+	            // 변환된 data 배열을 반복하여 HTML에 동적 <li> 요소 추가
+	            data.forEach(result => { // 최대 maxLiCount개의 li만 생성
+	                // <li> 요소 생성하여 각각의 결과를 표시할 준비
+	                const li = document.createElement('li');
+	                li.classList.add('flex', 'justify-between', 'items-center'); // CSS 클래스 추가하여 요소 스타일링
+	
+	                // <li>의 innerHTML을 설정하여 라벨 이름과 확률 값을 포함한 HTML 텍스트 추가
+	                li.innerHTML = `<span>${result.name}</span><span class="font-semibold">${result.value}</span>`;
+	
+	                // <ul> 요소에 <li>를 추가하여 화면에 결과를 표시
+	                ul.appendChild(li);
+	            });
+	        })
+	        // 에러 발생 시 콘솔에 오류 메시지 출력
+	        .catch(error => console.error('Error fetching label probabilities:', error));
+	}
 
-	// 서버에 xrayCode를 쿼리 파라미터로 전달하여 /xray/result 엔드포인트에서 데이터를 가져옴
-	fetch(`/diagnosis/xray/result?xrayCode=${encodeURIComponent(xrayCode)}`)
-		.then(response => response.json()) // JSON 형식으로 응답을 파싱
-		.then(data => {
-			console.log("받는 값:", data); // 응답 데이터 확인
-			// 결과 데이터가 없을 경우 Normal 표시
-	        if (data.length === 0) {
-	            data = [{ name: "Normal", value: "" }];
-	        } else {
-	            // 데이터가 있을 경우, 확률 값을 포맷
-	            data = data.map(item => ({
-	                name: item.labelName,
-	                value: `${item.probability.toFixed(1)}%`
-	            }));
-	        }
-			
-			// diagnosisResults 요소의 기존 내용을 제거
-        	diagnosisResults.innerHTML = "";
-
-			// 변환된 resultsData 배열을 반복하여 HTML에 동적 요소 추가
-			data.forEach(result => {
-				// div 요소 생성하여 각각의 결과를 표시할 준비
-				const div = document.createElement('div');
-				div.classList.add('flex', 'justify-between'); // CSS 클래스 추가하여 요소 스타일링
-
-				// div의 innerHTML을 설정하여 라벨 이름과 확률 값을 포함한 HTML 텍스트 추가
-				div.innerHTML = `<span>${result.name}</span><span class="font-semibold">${result.value}</span>`;
-
-				// diagnosisResults 요소에 div를 추가하여 화면에 결과를 표시
-				diagnosisResults.appendChild(div);
-			});
-		})
-		// 에러 발생 시 콘솔에 오류 메시지 출력
-		.catch(error => console.error('Error fetching label probabilities:', error));
 
 
 	// 서버에서 xrayCode로 데이터 가져오기

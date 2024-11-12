@@ -22,18 +22,18 @@ public interface MRMapper {
 	public void registDoctor(DoctorTb dt);
 
 	// 의사테이블에서 중복된 id가 있는지 확인하기
-	@Select("SELECT * FROM DOCTOR_TB WHERE DT_ID = #{dtId}")
+	@Select("SELECT * FROM DOCTOR_TB WHERE BINARY DT_ID = #{dtId}")
 	public DoctorTb checkDuplicateId(String dtId);
 
 	// 의사테이블에서 code 만 빼오기
-	@Select("SELECT * FROM DOCTOR_TB WHERE DT_CODE = #{dtCode}")
+	@Select("SELECT * FROM DOCTOR_TB WHERE BINARY DT_CODE = #{dtCode}")
 	public DoctorTb checkDuplicateCode(String dtCode);
 
 	// 로그인
 	// 로그인 시 일치하는 지(넘어오는 값이 있는지로 판단)
 	// 로그인 후에 반환되는 정보에 이름만 따로 띄우기도 해야함 java에서 빼오기
 	@Select("SELECT * FROM DOCTOR_TB " 
-			+ "WHERE DT_ID = #{dtId} AND DT_PW = #{dtPw}")
+			+ "WHERE BINARY DT_ID = #{dtId} AND BINARY DT_PW = #{dtPw}")
 	public DoctorTb validateLogin(String dtId, String dtPw);
 
 	// 마이페이지 // 여기서 이름만 추출해서 로그인 후에 이름 뜨게 하면 될 듯...?

@@ -130,8 +130,10 @@ public class DiagnosisController {
 
                     // 50.0 이상인 확률 값만 리스트에 추가
                     if (value != null && value > 50.0) {
+                    	// 필드명에서 "_"를 " "로 변환하여 라벨명을 생성
+                        String labelName = field.getName().replace("_", " ");
                         // 필드명과 확률 값을 LabelProbability 객체에 담아 리스트에 추가
-                        labelProbabilities.add(new LabelProbability(field.getName(), value));
+                        labelProbabilities.add(new LabelProbability(labelName, value));
                     }
                 }
             }
