@@ -24,7 +24,7 @@ public class UserService {
     public void registerUser(String dtCode, String dtId, String rawPassword, String dtName, String division, String dtTelno) {
         // 1. 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(rawPassword);
-        System.out.println("암호화된 비밀번호:--------------------------------- " + encodedPassword); // 암호화된 비밀번호 로그 출력
+        System.out.println("암호화된 비밀번호: " + encodedPassword); // 암호화된 비밀번호 로그 출력
 
         // 2. DoctorTb 객체 생성 및 데이터 설정 (생성자를 사용하여 초기화)
         DoctorTb doctor = new DoctorTb(dtCode, dtId, encodedPassword, dtName, division, dtTelno);
@@ -34,6 +34,6 @@ public class UserService {
     }
 
 	public void registerUser(DoctorTb dt) {
-		this.registerUser(dt.getDtCode(), dt.getDT_ID(), dt.getDT_PW(), dt.getDtName(), dt.getDivision(), dt.getDtTelno());
+		this.registerUser(dt.getDT_CODE(), dt.getDT_ID(), dt.getDT_PW(), dt.getDT_NAME(), dt.getDIVISION(), dt.getDT_TELNO());
 	}
 }

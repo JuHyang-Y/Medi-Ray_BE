@@ -59,7 +59,7 @@ public class SignupController {
                 return 2;  // 이메일 중복 시 2 반환
             }
             // 의사 코드 중복 확인
-            if (mapper.checkDuplicateCode(dt.getDtCode()) != null) {
+            if (mapper.checkDuplicateCode(dt.getDT_CODE()) != null) {
                 return 3;  // 의사 코드 중복 시 3 반환
             }
 

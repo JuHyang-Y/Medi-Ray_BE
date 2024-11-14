@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor  // 기본 생성자 생성
 @Builder
 public class DoctorTb {
-    private String dtCode;
+    private String DT_CODE;
     private String DT_ID;
     private String DT_PW;
-    private String dtName;
-    private String division;
-    private String dtTelno;
+    private String DT_NAME;
+    private String DIVISION;
+    private String DT_TELNO;
 }

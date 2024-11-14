@@ -1,21 +1,29 @@
 document.addEventListener('DOMContentLoaded', function () {
   // 서버에서 사용자 정보 가져오기
   function fetchUserName() {
-    return fetch('/user/get-name')  // 서버에서 로그인된 사용자의 이름을 가져옴
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('사용자 정보를 가져오지 못했습니다.');
-        }
-        return response.text();
-      })
-      .catch(error => {
-        console.error('Error fetching user name:', error);
-        return null;  // 에러가 발생하면 null 반환
-      });
+    return fetch('/user/get-name', {
+      method: 'GET',
+      credentials: 'include'  // 세션 기반 인증을 위한 설정
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('사용자 정보를 가져오지 못했습니다.');
+      }
+      return response.text();
+    })
+    .then(name => {
+      console.log('Fetched user name:', name);  // 서버에서 가져온 사용자 이름 출력
+      return name;
+    })
+    .catch(error => {
+      console.error('Error fetching user name:', error);
+      return null;  // 에러가 발생하면 null 반환
+    });
   }
 
   // 로그인/로그아웃 UI를 동적으로 업데이트하는 함수
   function updateAuthUI(name) {
+	console.log('Updating UI with name:', name);  // updateAuthUI 함수에 전달된 이름 출력
     const authContainer = document.getElementById('user-info');
     authContainer.innerHTML = ''; // 기존 내용 초기화
 

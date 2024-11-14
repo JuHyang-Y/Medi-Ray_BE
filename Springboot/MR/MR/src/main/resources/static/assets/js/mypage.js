@@ -14,10 +14,10 @@
       })
       .then((data) => {
         // 마이페이지 필드에 정보 채우기
-        document.getElementById("name").value = data.dtName;
-        document.getElementById("phone").value = data.dtTelno;
-        document.getElementById("email").value = data.dtId;
-        document.getElementById("doctor-code").value = data.dtCode;
+        document.getElementById("name").value = data.dt_NAME;
+        document.getElementById("phone").value = data.dt_TELNO;
+        document.getElementById("email").value = data.dt_ID;
+        document.getElementById("doctor-code").value = data.dt_CODE;
         document.getElementById("hospital").value = data.division;
       })
       .catch((error) => {
@@ -122,9 +122,3 @@ document.querySelector('button#update-division').addEventListener('click', funct
 document.addEventListener('DOMContentLoaded', function () {
   fetchUserDetails();  // 로그인된 사용자의 상세 정보 가져오기
 });
-
-
-      // 페이지 로드 시 사용자 정보를 가져와 UI 업데이트
-      document.addEventListener("DOMContentLoaded", function () {
-        fetchUserDetails(); // 로그인된 사용자의 상세 정보 가져오기
-      });
