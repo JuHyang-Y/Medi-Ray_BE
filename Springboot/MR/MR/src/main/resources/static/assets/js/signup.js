@@ -43,17 +43,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 			// AJAX 요청을 통해 의사 코드 중복 확인
 			fetch(`/signup/check-code?dtCode=${encodedDoctorCode}`)
-				.then(response => response.text())
+				.then(response => response.json()) // 응답을 JSON으로 처리
 				.then(data => {
-					const code = parseInt(data, 10); // 응답을 숫자로 변환
-					if (code === 1) {
+					if (data === 1) {
 						alert('이미 등록된 의사코드입니다.');
-					} else if (code === 3) {
+					} else if (data === 3) {
 						alert('등록할 수 없는 형식의 의사코드입니다.');
-					} else if (code === 0) {
+					} else if (data === 0) {
 						alert('등록 가능한 의사코드입니다.');
 					} else {
 						alert('의사 코드 확인 중 오류가 발생했습니다.');
+						console.log(data);
 					}
 				})
 				.catch(error => {
@@ -129,28 +129,33 @@ document.addEventListener('DOMContentLoaded', function() {
 		};
 
 		fetch('/signup/register', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data),
+		    method: 'POST',
+		    headers: {
+		        'Content-Type': 'application/json',
+		    },
+		    body: JSON.stringify(data),
 		})
-			.then(response => response.text())
-			.then(data => {
-				if (data === '1') {
-					alert('회원가입이 완료되었습니다!\n로그인을 진행합니다.');
-					window.location.href = 'login';  // 성공 시 메인 화면으로 이동
-				} else if (data === '2') {
-					alert('이메일을 수정해주세요');  // 이메일 중복
-				} else if (data === '3') {
-					alert('의사코드를 수정해주세요.');  // 의사 코드 중복
-				} else {
-					alert('회원가입에 실패했습니다.');
-				}
-			})
-			.catch(error => {
-				console.error('Error:', error);
-				alert('회원가입 처리 중 오류가 발생했습니다.');
-			});
+		.then(response => {
+		    console.log('Response status:', response.status); // 응답 상태 코드 확인
+		    return response.text();
+		})
+		.then(data => {
+		    console.log('Response data:', data); // 응답 데이터 확인
+		    if (data === '1') {
+		        alert('회원가입이 완료되었습니다!\n로그인을 진행합니다.');
+		        window.location.href = 'login';
+		    } else if (data === '2') {
+		        alert('이메일을 수정해주세요');
+		    } else if (data === '3') {
+		        alert('의사코드를 수정해주세요.');
+		    } else {
+		        alert('회원가입에 실패했습니다.');
+		    }
+		})
+		.catch(error => {
+		    console.error('Error:', error);
+		    alert('회원가입 처리 중 오류가 발생했습니다.');
+		});
+
 	});
 }); 

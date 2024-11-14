@@ -33,11 +33,18 @@ document.addEventListener('DOMContentLoaded', function () {
       const logoutButton = document.createElement('button');
       logoutButton.textContent = '로그아웃';
       logoutButton.classList.add('text-red-500', 'text-lg', 'ml-4');
-      logoutButton.addEventListener('click', function () {
-        // 로그아웃 로직 추가 (필요시 서버와 통신하여 로그아웃 처리)
-        alert('로그아웃되었습니다.');
-        window.location.href = '/login';  // 로그아웃 후 로그인 페이지로 이동
-      });
+      logoutButton.addEventListener('click', function() {
+	    fetch('/logout', { method: 'POST' })
+	        .then(() => {
+	            alert('로그아웃되었습니다.');
+	            window.location.href = '/login'; // 로그아웃 후 로그인 페이지로 이동
+	        })
+	        .catch(error => {
+	            console.error('로그아웃 중 오류 발생:', error);
+	            alert('로그아웃 중 문제가 발생했습니다. 다시 시도해주세요.');
+	        });
+	});
+
 
       authContainer.appendChild(userNameSpan);
       authContainer.appendChild(logoutButton);
