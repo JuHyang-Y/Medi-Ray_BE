@@ -5,7 +5,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import time
 import torchvision.models as models
-from pydantic.v1.main import Model
 
 
 __all__ = ['ResNet', 'resnet18', 'resnet34', 'resnet50', 'resnet101',

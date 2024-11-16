@@ -7,7 +7,7 @@ from resnet import resnet50
 
 class ModelLoader:
     def __init__(self, model_path):
-        checkpoint = torch.load(model_path)
+        checkpoint = torch.load(model_path, map_location=torch.device('cpu'))
         self.model = resnet50(num_classes=14)  # 또는 사용하는 모델
         self.model.load_state_dict(checkpoint['state_dict'])
         self.model.eval()

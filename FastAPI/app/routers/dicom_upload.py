@@ -1,6 +1,6 @@
 from tabnanny import check
 
-from fastapi import FastAPI, File, UploadFile  # FastAPI 관련 모듈 임포트
+from fastapi import FastAPI, File, UploadFile, APIRouter  # FastAPI 관련 모듈 임포트
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel  # 데이터 모델링을 위한 Pydantic 임포트
 import SimpleITK as sitk  # 의료 이미지 처리를 위한 SimpleITK 임포트
@@ -12,7 +12,6 @@ import logging  # 로깅을 처리하는 라이브러리
 import base64  # 바이너리 데이터를 텍스트로 인코딩하는 라이브러리
 from io import BytesIO  # 메모리 상에서 바이트 데이터를 처리하기 위한 라이브러리
 import tempfile  # 임시 파일 생성을 위한 tempfile 모듈 임포트
-from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
 from typing import Dict
 
@@ -21,24 +20,11 @@ from fastapi import FastAPI, File, UploadFile
 #from model import ModelLoader
 from PIL import Image
 
-app = FastAPI()
+
+
+router = APIRouter()
 #model = models.resnet50() # 모델 초기화
 
-# 허용할 출처 설정
-origins = [
-    "http://localhost:8089",  # 클라이언트가 실행되는 출처 추가
-    "https://localhost:8443", # 필요 시 https 출처도 추가
-]
-
-# CORS 미들웨어 추가
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # 허용할 출처 목록
-    allow_credentials=True,
-    allow_methods=["*"],  # 허용할 HTTP 메서드 (GET, POST 등)
-    allow_headers=["*"]  # 허용할 HTTP 헤더
-
-)
 
 # 경고 메시지 숨기기 및 로그 레벨 설정 (INFO 이하 메시지는 출력하지 않음)
 warnings.filterwarnings('ignore')
@@ -111,7 +97,7 @@ def process_dicom_to_json(dicom_path, image_size=512):
 
 
 # DICOM 파일 업로드 및 처리 엔드포인트 정의
-@app.post("/dupload",response_model=DetectionResult)
+@router.post("/dupload",response_model=DetectionResult)
 async def process_dicom(file: UploadFile):
     """
     업로드된 DICOM 파일을 처리하여 이미지와 메타데이터를 반환하는 엔드포인트.
@@ -142,8 +128,4 @@ async def process_dicom(file: UploadFile):
             metadata={}
         )
 
-# uvicorn으로 이 모듈을 직접 실행할 때 서버를 구동하기 위한 코드
-if __name__ == "__main__":
-    import uvicorn
-    # FastAPI 애플리케이션을 uvicorn으로 실행
-    uvicorn.run(app, host="192.168.0.2", port=8000, ssl_certfile="cert.pem", ssl_keyfile="key.pem")
+
