@@ -46,4 +46,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		document.getElementById('signupLink').addEventListener('click', function() {
 			window.location.href = 'signup';  // 회원가입 화면으로 이동
 		});
+		
+		// 로고 클릭 시 index.html로 이동
+        document.getElementById('logo').addEventListener('click', function () {
+          window.location.href = 'index';
+        });
 });

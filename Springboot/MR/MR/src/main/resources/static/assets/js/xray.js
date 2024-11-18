@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		fetchOpinionAndUpdate();
 		// 페이지가 변경될 때마다 호출 (예: xrayCode가 바뀔 때마다 호출)
 		fetchDiagnosisResults(xrayCode);
-		const xrayImgPath = `/diagnosis/xray/getImage?xrayCode=${encodeURIComponent(xrayCode)}`;
+		const xrayImgPath = `/diagnosis/xray/getImage?ptCode=${encodeURIComponent(ptCode)}&xrayCode=${encodeURIComponent(xrayCode)}`;
 		loadImageToCanvas(xrayImgPath);
 		/*loadImageByXrayCode(xrayCode);*/
 	} else {
@@ -324,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	function updateScreen(imgData) {
 		if (imgData.length > 0) {
 			// imgData 배열의 첫 번째 항목에서 xrayImgPath를 가져옴
-			const xrayImgPath = `/diagnosis/xray/getImage?xrayCode=${encodeURIComponent(xrayCode)}`;
+			const xrayImgPath = `/diagnosis/xray/getImage?ptCode=${encodeURIComponent(ptCode)}&xrayCode=${encodeURIComponent(xrayCode)}`;
 
 			xrayCode = imgData[0].xrayCode;
 			localStorage.setItem('xrayCode', xrayCode); // localStorage에 저장

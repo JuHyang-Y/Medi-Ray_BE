@@ -91,4 +91,10 @@ document.addEventListener('DOMContentLoaded', function () {
       updateAuthUI(null);  // 로그인되지 않은 경우
     }
   });
+  // 로고 클릭 시 main로 이동
+  document.getElementById('logo').addEventListener('click', function () {
+    window.location.href = 'main';
+  });
+  
+  
 });

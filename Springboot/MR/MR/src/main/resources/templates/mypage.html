@@ -6,43 +6,25 @@
     <title>My Page</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/assets/css/styles.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     />
-    <style>
-      /* 아코디언 메뉴 기본적으로 숨김 (오른쪽에서 슬라이드됨) */
-      #accordionMenu {
-        position: fixed;
-        top: 0;
-        right: 0;
-        height: 100%;
-        width: 250px;
-        background-color: black;
-        padding: 1rem;
-        z-index: 30;
-        transform: translateX(100%);
-        transition: transform 0.3s ease-in-out;
-      }
-
-      /* 메뉴가 열렸을 때 사용하는 클래스 */
-      #accordionMenu.open {
-        transform: translateX(0);
-      }
-    </style>
   </head>
 
-  <body class="bg-gray-100 font-sans">
+  <body class="bg-gray-200 font-sans">
     <!-- Header -->
-    <header class="bg-white w-full h-16 shadow-md fixed flex items-center px-4 z-10">
+    <header
+      class="bg-white w-full h-16 shadow-md fixed flex items-center px-4 z-50"
+    >
       <!-- 로고 이미지 -->
       <img
-        src="assets/img/logo.svg"
+        src="/assets/img/logo.svg"
         alt="Medi-Ray Logo"
-        class="w-24 h-auto sm:w-32 cursor-pointer"
+        class="w-32 h-auto cursor-pointer"
         id="logo"
       />
-
       <!-- 햄버거 버튼 -->
       <button id="menuToggle" class="ml-auto text-gray-800">
         <i class="fas fa-bars text-2xl"></i>
@@ -50,37 +32,69 @@
     </header>
 
     <!-- Accordion Menu (Right Sidebar) -->
-    <div id="accordionMenu" class="bg-black text-white p-6">
+    <div
+      id="accordionMenu"
+      class="bg-black text-white p-6 transform translate-x-full fixed top-0 right-0 h-full w-64 transition-transform duration-300 z-50"
+    >
       <!-- Close Button -->
-      <button id="closeBtn" class="text-white mb-4 focus:outline-none">
-        <i class="fas fa-times text-xl"></i> Close
+      <button
+        id="closeBtn"
+        class="absolute top-4 right-4 text-white text-2xl focus:outline-none"
+      >
+        ✕
       </button>
 
-      <!-- User Info with Profile Image -->
-      <div class="flex items-center mb-6">
+      <!-- User Info Section -->
+      <div
+        class="flex flex-col items-center border-b border-gray-700 pb-4 mb-4"
+      >
         <img
-          src="./assets/img/profile.png"
+          src="/assets/img/profile.png"
           alt="Profile Image"
-          class="w-12 h-12 rounded-full mr-4"
+          class="w-16 h-16 rounded-full mb-2"
         />
-        <div id="user-info" class="text-gray-300"></div>
+        <div id="user-info" class="text-center text-gray-300 text-lg">
+          <!-- 동적으로 사용자 이름과 버튼이 추가됩니다 -->
+        </div>
       </div>
 
-      <!-- Accordion Links -->
-      <a href="about" class="py-2 block hover:bg-gray-700 rounded">About Us</a>
-      <a href="dicom" class="py-2 block hover:bg-gray-700 rounded">DICOM Upload</a>
-      <a href="diagnosis" class="py-2 block hover:bg-gray-700 rounded">Diagnosis</a>
+      <!-- Navigation Links -->
+      <nav class="space-y-2">
+        <a
+          href="about"
+          class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded transition duration-300"
+        >
+          About Us
+        </a>
+        <a
+          href="dicom"
+          class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded transition duration-300"
+        >
+          DICOM Upload
+        </a>
+        <a
+          href="diagnosis"
+          class="block py-2 px-4 text-gray-300 hover:bg-gray-700 hover:text-white rounded transition duration-300"
+        >
+          Diagnosis
+        </a>
+      </nav>
     </div>
 
+     
     <!-- Main Content -->
-    <div class="flex justify-center items-center min-h-screen pt-20 px-4 md:px-8">
+    <div
+      class="flex justify-center items-center min-h-screen pt-20 px-4 md:px-8"
+    >
       <div class="w-full max-w-2xl bg-white p-6 sm:p-8 shadow-md rounded-lg">
         <h2 class="text-xl md:text-2xl font-bold text-center mb-6">My Page</h2>
 
         <form id="mypageForm" class="flex flex-col items-center justify-center">
           <div class="space-y-4 w-full">
             <div>
-              <label for="name" class="block text-gray-700 text-sm mb-1">이름</label>
+              <label for="name" class="block text-gray-700 text-sm mb-1"
+                >이름</label
+              >
               <input
                 type="text"
                 id="name"
@@ -91,7 +105,9 @@
             </div>
 
             <div>
-              <label for="phone" class="block text-gray-700 text-sm mb-1">전화번호</label>
+              <label for="phone" class="block text-gray-700 text-sm mb-1"
+                >전화번호</label
+              >
               <input
                 type="text"
                 id="phone"
@@ -102,7 +118,9 @@
             </div>
 
             <div>
-              <label for="email" class="block text-gray-700 text-sm mb-1">이메일</label>
+              <label for="email" class="block text-gray-700 text-sm mb-1"
+                >이메일</label
+              >
               <input
                 type="email"
                 id="email"
@@ -113,7 +131,9 @@
             </div>
 
             <div>
-              <label for="password" class="block text-gray-700 text-sm mb-1">비밀번호</label>
+              <label for="password" class="block text-gray-700 text-sm mb-1"
+                >비밀번호</label
+              >
               <input
                 type="password"
                 id="password"
@@ -124,7 +144,11 @@
             </div>
 
             <div>
-              <label for="password-confirm" class="block text-gray-700 text-sm mb-1">비밀번호 확인</label>
+              <label
+                for="password-confirm"
+                class="block text-gray-700 text-sm mb-1"
+                >비밀번호 확인</label
+              >
               <input
                 type="password"
                 id="password-confirm"
@@ -142,7 +166,9 @@
             </div>
 
             <div>
-              <label for="doctor-code" class="block text-gray-700 text-sm mb-1">의사코드</label>
+              <label for="doctor-code" class="block text-gray-700 text-sm mb-1"
+                >의사코드</label
+              >
               <input
                 type="text"
                 id="doctor-code"
@@ -153,7 +179,9 @@
             </div>
 
             <div>
-              <label for="hospital" class="block text-gray-700 text-sm mb-1">의사소속</label>
+              <label for="hospital" class="block text-gray-700 text-sm mb-1"
+                >의사소속</label
+              >
               <input
                 type="text"
                 id="hospital"

@@ -34,7 +34,7 @@ public class RestReqController {
 		// BodyBuilder에 담은 메세지와 file을 BodyInserters를 이용하여 Body에 넣는다.
 		// retrieve를 통해서 결과를 받는다.
 		// 받은 타입은 body2-mono라는 클래스를 이용해서 String 타입으로 변환
-		String result = WebClient.post().uri("/dupload")// POST 방식으로 요청. 엔드포인트는 /dupload
+		String result = WebClient.post().uri("/dicom/dupload")// POST 방식으로 요청. 엔드포인트는 /dupload
 				.contentType(MediaType.MULTIPART_FORM_DATA) // 파일이 전송
 				.body(BodyInserters.fromMultipartData(bodyBuilder.build())) // 폼데이터를 요청 본문으로 설정
 				.retrieve()// 요청을 실행하고 응답을 받음

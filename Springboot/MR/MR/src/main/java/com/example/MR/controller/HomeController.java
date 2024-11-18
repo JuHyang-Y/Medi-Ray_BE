@@ -27,7 +27,7 @@ public class HomeController {
     // 초기화면
     @RequestMapping("/index")
     public String index() {
-        return "main/index";
+        return "index";
     }
     
 	// 메인화면

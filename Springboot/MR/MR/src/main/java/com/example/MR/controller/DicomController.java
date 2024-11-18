@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +16,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.MR.entity.ImgTb;
+import com.example.MR.entity.ResultTb;
 import com.example.MR.mapper.DiagnosisMapper;
 import com.example.MR.mapper.MRMapper;
 
@@ -35,6 +37,13 @@ import com.example.MR.mapper.MRMapper;
 @RequestMapping("/api/upload")
 public class DicomController {
 
+	private final TransactionTemplate transactionTemplate;	
+	
+	@Autowired
+    public DicomController(TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
+    }
+	
     @Value("${fastapi.url}")
     private String fastapiUrl;
 
@@ -80,8 +89,13 @@ public class DicomController {
     
 
     @PostMapping("/imgupload")
-    public ResponseEntity<String> savePngFile(@RequestParam("image") String base64Image, @RequestParam("ptCode") String ptCode, @RequestParam("fileName") String fileName) {
-        try {
+    @Transactional(rollbackFor = {IOException.class, ArrayIndexOutOfBoundsException.class})
+    public ResponseEntity<String> savePngAndResult(
+    		@RequestParam("image") String base64Image, 
+    		@RequestParam("ptCode") String ptCode, 
+    		@RequestParam("fileName") String fileName,
+    		@RequestParam Map<String, Double> modelResults) throws Exception {
+//        try {
             // Base64 인코딩된 데이터에서 헤더 제거 및 디코딩
             String base64Data = base64Image.split(",")[1];
             byte[] imageBytes = Base64.getDecoder().decode(base64Data);
@@ -107,16 +121,41 @@ public class DicomController {
                                 .xrayImgPath(filePath) // 이미지 경로 설정
                                 .dtCode(dtCode)
                                 .build();
-
-            // 데이터베이스에 업로드
+            	
+            // 데이터베이스에 업로드  
             dmapper.imgUpload(imgTb);
+            
+            
+            // 3. RESULT_TB 데이터 저장
+            ResultTb resultTb = ResultTb.builder()
+                    .xrayCode(fileName)
+                    .ptCode(ptCode)
+                    .Atelectasis(modelResults.get("Atelectasis"))
+                    .Cardiomegaly(modelResults.get("Cardiomegaly"))
+                    .Consolidation(modelResults.get("Consolidation"))
+                    .Edema(modelResults.get("Edema"))
+                    .Enlarged_Cardiomediastinum(modelResults.get("Enlarged_Cardiomediastinum"))
+                    .Fracture(modelResults.get("Fracture"))
+                    .Lung_Lesion(modelResults.get("Lung_Lesion"))
+                    .Lung_Opacity(modelResults.get("Lung_Opacity"))
+                    .No_Finding(modelResults.get("No_Finding"))
+                    .Pleural_Effusion(modelResults.get("Pleural_Effusion"))
+                    .Pleural_Other(modelResults.get("Pleural_Other"))
+                    .Pneumonia(modelResults.get("Pneumonia"))
+                    .Pneumothorax(modelResults.get("Pneumothorax"))
+                    .Support_Devices(modelResults.get("Support_Devices"))
+                    .build();
+            dmapper.imgReult(resultTb);
+            throw new IOException("rollback test");
 
-            return ResponseEntity.ok("이미지 저장 및 데이터베이스 저장 성공");
+//            return ResponseEntity.ok("이미지, 결과 데이터베이스 저장 성공");
 
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Base64 이미지 저장 중 오류 발생: " + e.getMessage());
-        } catch (ArrayIndexOutOfBoundsException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 Base64 데이터 형식입니다.");
-        }
+//        } catch (IOException IOe) {
+//        	
+//        	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("저장 중 오류 발생: " + IOe.getMessage());
+//        	
+//        } catch (ArrayIndexOutOfBoundsException AIOOBe) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("데이터 처리 중 오류 발생: " + AIOOBe.getMessage());
+//        }
     }
 }

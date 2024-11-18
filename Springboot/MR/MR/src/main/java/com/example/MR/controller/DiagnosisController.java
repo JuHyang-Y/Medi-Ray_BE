@@ -85,9 +85,9 @@ public class DiagnosisController {
     private static final String UPLOAD_DIR = "C:/Users/USER/dicom"; 
 
     @GetMapping("/xray/getImage")
-    public ResponseEntity<Resource> getImage(@RequestParam("xrayCode") String xrayCode) {
+    public ResponseEntity<Resource> getImage(@RequestParam("ptCode") String ptCode, @RequestParam("xrayCode") String xrayCode) {
         try {
-            String filePath = UPLOAD_DIR + "/" + xrayCode + ".png";
+            String filePath = UPLOAD_DIR + "/" + ptCode + "/" +xrayCode + ".png";
             Resource resource = new FileSystemResource(filePath);
 
             if (!resource.exists()) {
