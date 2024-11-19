@@ -6,6 +6,7 @@
     <title>Diagnosis - Medi-Ray</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/assets/css/styles.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
@@ -97,19 +98,19 @@
                 id="brushTool"
                 class="px-3 py-1 md:px-4 md:py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition"
               >
-                Brush
+                BRUSH
               </button>
               <button
                 id="rectangleTool"
                 class="px-3 py-1 md:px-4 md:py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition"
               >
-                Rectangle
+                RECTANGLE
               </button>
               <button
                 id="clearCanvas"
                 class="px-3 py-1 md:px-4 md:py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition"
               >
-                Erase All
+                CLEAR
               </button>
               <button
                 id="camButton"
@@ -189,7 +190,16 @@
                   Patient 2
                 </button>
               </li>
+              <li>
+                <button
+                  id="patientBtn2"
+                  class="text-blue-500 hover:text-blue-700 transition"
+                >
+                  Patient 2
+                </button>
+              </li>
             </ul>
+            <div id="pagination" class="flex justify-center mt-4"></div>
           </div>
 
           <div
@@ -201,14 +211,33 @@
             >
               병변 예측 결과
             </h3>
-            <ul class="space-y-2 flex-1 overflow-y-auto">
+            <!-- <ul class="space-y-2 flex-1 overflow-y-auto">
               <li class="flex justify-between items-center">
-                <span>병변 1</span>
+                <div>병변 1</div>
               </li>
               <li class="flex justify-between items-center">
                 <span>병변 2</span>
               </li>
-            </ul>
+            </ul> -->
+            <table class="table-fixed w-full border-collapse">
+			  <tr class="border-b">
+			    <td class="w-1/2 text-left p-2">Atelectasis</td>
+			    <td class="w-1/2 text-right p-2 font-semibold">80.5%</td>
+			  </tr>
+			  <tr class="border-b">
+			    <td class="w-1/2 text-left p-2">Lung Lesion</td>
+			    <td class="w-1/2 text-right p-2 font-semibold">71.0%</td>
+			  </tr>
+			  <tr class="border-b">
+			    <td class="w-1/2 text-left p-2">Pneumonia</td>
+			    <td class="w-1/2 text-right p-2 font-semibold">60.8%</td>
+			  </tr>
+			  <tr>
+			    <td class="w-1/2 text-left p-2">Enlarged Cardiomedias...</td>
+			    <td class="w-1/2 text-right p-2 font-semibold">43.7%</td>
+			  </tr>
+			</table>
+            
           </div>
 
           <div class="bg-white p-4 md:p-6 rounded-lg shadow-md">

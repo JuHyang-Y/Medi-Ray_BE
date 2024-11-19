@@ -4,21 +4,29 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.MR.entity.ImgTb;
 import com.example.MR.entity.LabelProbability;
@@ -30,6 +38,9 @@ import com.example.MR.mapper.MRMapper;
 @RestController
 @RequestMapping("/diagnosis")
 public class DiagnosisController {
+	
+	@Value("${fastapi.url}")
+    private String fastapiUrl;
 
     @Autowired
     private MRMapper mapper;
@@ -149,8 +160,44 @@ public class DiagnosisController {
 
 
     
-    
-    
+    // Grad-CAM 생성 요청 처리
+	// Grad-CAM 생성 요청 처리
+    @PostMapping("/gradcam")
+    public ResponseEntity<?> generateGradCam(@RequestBody Map<String, String> requestBody) {
+        try {
+            RestTemplate restTemplate = new RestTemplate(); // REST API 호출을 위한 RestTemplate 생성
+
+            // FastAPI로 요청 전송을 위한 헤더 설정
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON); // JSON 형식으로 설정
+
+            // 요청 본문에서 Base64 이미지 데이터 추출
+            String base64Img = requestBody.get("base64_img");
+            if (base64Img == null || base64Img.isEmpty()) {
+                return ResponseEntity.badRequest().body("Base64 이미지 데이터가 없습니다.");
+            }
+
+            // FastAPI로 보낼 JSON 데이터 구성
+            Map<String, String> fastApiRequestBody = new HashMap<>();
+            fastApiRequestBody.put("base64_img", base64Img);
+
+            HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(fastApiRequestBody, headers);
+
+            // FastAPI로 POST 요청 전송
+            ResponseEntity<Map> response = restTemplate.exchange(
+                fastapiUrl + "/gradcam",  // FastAPI의 Grad-CAM 엔드포인트
+                HttpMethod.POST,
+                requestEntity,
+                Map.class // 응답 데이터를 Map 형태로 받음
+            );
+
+            // FastAPI의 응답을 클라이언트로 반환
+            return ResponseEntity.ok(response.getBody());
+        } catch (Exception e) {
+            // 예외 발생 시 에러 메시지 반환
+            return ResponseEntity.status(500).body("Grad-CAM 생성 중 오류가 발생했습니다: " + e.getMessage());
+        }
+    }
     
     
 }

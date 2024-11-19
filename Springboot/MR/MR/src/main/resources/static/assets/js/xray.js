@@ -149,20 +149,57 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 	// CAM button functionality
+	// Grad-CAM 버튼 클릭 이벤트
 	document.getElementById('camButton').addEventListener('click', () => {
-		heatmapActive = !heatmapActive;
-
-		if (heatmapActive) {
-			// Simulate heatmap by overlaying color spots on the canvas
-			// CAM 효과를 추가하기 전에 현재 캔버스 상태를 저장
-			drawHeatmap();
-			document.getElementById('camButton').textContent = 'Hide CAM';
-		} else {
-			// Clear heatmap and redraw uploaded image if available
-			camCtx.clearRect(0, 0, camCanvas.width, camCanvas.height);
-			document.getElementById('camButton').textContent = 'Show CAM';
-		}
+	    heatmapActive = !heatmapActive; // 현재 Grad-CAM 활성 상태를 반전
+	
+	    if (heatmapActive) {
+	        console.log("Grad-CAM 활성화: Canvas 데이터를 Base64로 변환 중...");
+	
+	        // Canvas 데이터를 Base64로 변환
+	        const base64Img = dicomCanvas.toDataURL("image/png").split(",")[1]; // Base64 인코딩, 헤더 제거
+	
+	        // AJAX 요청을 통해 FastAPI로 Base64 데이터 전송
+	        $.ajax({
+	            url: 'https://192.168.20.146:8000/dicom/gradcam', // FastAPI 엔드포인트
+	            type: 'POST', // POST 요청
+	            contentType: 'application/json', // JSON 형식으로 전송
+	            data: JSON.stringify({ base64_img: base64Img }), // 요청 본문에 Base64 데이터 포함
+	            success: function (response) {
+	                console.log("FastAPI 응답 데이터:", response); // FastAPI 응답 로그
+	                // 서버 응답에서 Base64 이미지 데이터 처리
+	                if (response.image) {
+	                    const camImage = new Image();
+	                    camImage.src = `data:image/png;base64,${response.image}`; // Base64 데이터를 이미지 소스로 설정
+	
+	                    camImage.onload = () => {
+	                        // Grad-CAM 이미지를 캔버스에 렌더링
+	                        camCtx.clearRect(0, 0, camCanvas.width, camCanvas.height); // 기존 내용 초기화
+	                        camCtx.drawImage(camImage, 0, 0, camCanvas.width, camCanvas.height); // 새 이미지 그리기
+	                    };
+	                } else {
+	                    console.error("FastAPI 응답에 이미지 데이터가 없습니다.");
+	                    alert("Grad-CAM 결과를 가져오지 못했습니다.");
+	                }
+	                document.getElementById('camButton').textContent = 'DICOM'; // 버튼 텍스트 변경
+	            },
+	            error: function (xhr, status, error) {
+	                console.error("Grad-CAM 요청 중 오류 발생:", error);
+	                console.error("XHR 응답:", xhr.responseText);
+	                alert("Grad-CAM 생성 중 오류가 발생했습니다."); // 사용자에게 오류 알림
+	            },
+	        });
+	    } else {
+	        console.log("Grad-CAM 비활성화: 원본 이미지 표시");
+	        // Grad-CAM 비활성화: 원본 이미지 표시
+	        camCtx.clearRect(0, 0, camCanvas.width, camCanvas.height); // Grad-CAM 캔버스 초기화
+	        document.getElementById('camButton').textContent = 'CAM'; // 버튼 텍스트 변경
+	    }
 	});
+
+
+
+
 
 	function drawHeatmap() {
 		// Placeholder heatmap rendering logic
@@ -326,6 +363,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			// imgData 배열의 첫 번째 항목에서 xrayImgPath를 가져옴
 			const xrayImgPath = `/diagnosis/xray/getImage?ptCode=${encodeURIComponent(ptCode)}&xrayCode=${encodeURIComponent(xrayCode)}`;
 
+
 			xrayCode = imgData[0].xrayCode;
 			localStorage.setItem('xrayCode', xrayCode); // localStorage에 저장
 			console.log('Updated xrayCode:', xrayCode);
@@ -378,51 +416,42 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// xrayCode에 맞는 진단 결과를 불러와서 화면에 표시하는 함수
 	function fetchDiagnosisResults(xrayCode) {
-		const diagnosisResults = document.getElementById('diagnosisResults');
-	    const ul = diagnosisResults.querySelector('ul');
-	    const maxLiCount = 4; // 고정된 li 개수 설정
-	    // 서버에 xrayCode를 쿼리 파라미터로 전달하여 /xray/result 엔드포인트에서 데이터를 가져옴
-	    fetch(`/diagnosis/xray/result?xrayCode=${encodeURIComponent(xrayCode)}`)
-	        .then(response => response.json()) // JSON 형식으로 응답을 파싱
-	        .then(data => {
-	            console.log("받는 값:", data); // 응답 데이터 확인
-	
-	            // 결과 데이터가 없을 경우 Normal 표시
-	            if (data.length === 0) {
-	                data = [{ name: "Normal", value: "" }];
-	            } else {
-	                // 데이터가 있을 경우, 확률 값을 포맷
-	                data = data.map(item => ({
-	                    name: item.labelName,
-	                    value: `${item.probability.toFixed(1)}%`
-	                }));
-	            }
-	            
-	            // 데이터가 4개 미만일 경우, 빈 항목으로 채우기
-	            while (data.length < maxLiCount) {
-	                data.push({ name: " ", value: " " });
-	                
-	            }
-	
-	            // diagnosisResults 요소의 <ul> 내 기존 내용을 제거
-	            ul.innerHTML = "";
-	
-	            // 변환된 data 배열을 반복하여 HTML에 동적 <li> 요소 추가
-	            data.forEach(result => { // 최대 maxLiCount개의 li만 생성
-	                // <li> 요소 생성하여 각각의 결과를 표시할 준비
-	                const li = document.createElement('li');
-	                li.classList.add('flex', 'justify-between', 'items-center'); // CSS 클래스 추가하여 요소 스타일링
-	
-	                // <li>의 innerHTML을 설정하여 라벨 이름과 확률 값을 포함한 HTML 텍스트 추가
-	                li.innerHTML = `<span>${result.name}</span><span class="font-semibold">${result.value}</span>`;
-	
-	                // <ul> 요소에 <li>를 추가하여 화면에 결과를 표시
-	                ul.appendChild(li);
-	            });
-	        })
-	        // 에러 발생 시 콘솔에 오류 메시지 출력
-	        .catch(error => console.error('Error fetching label probabilities:', error));
-	}
+    const diagnosisResults = document.getElementById('diagnosisResults');
+    const table = diagnosisResults.querySelector('table');
+    const maxLiCount = 4;
+
+    fetch(`/diagnosis/xray/result?xrayCode=${encodeURIComponent(xrayCode)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.length === 0) {
+                data = [{ name: "Normal", value: " " }];
+            } else {
+                data = data.map(item => ({
+                    name: item.labelName || "&nbsp;",
+                    value: `${item.probability?.toFixed(1) || "&nbsp;"}`
+                }));
+            }
+			
+			// 데이터가 4개 미만일 경우 공백으로 채우기
+            while (data.length < maxLiCount) {
+                data.push({ name: "&nbsp;", value: "&nbsp;" });
+            }
+
+            // 테이블 초기화
+            table.innerHTML = "";
+
+            // 데이터 추가
+            data.forEach(result => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="w-1/2 text-left p-2">${result.name}</td>
+                    <td class="w-1/2 text-right p-2 font-semibold">${result.value}</td>
+                `;
+                table.appendChild(tr);
+            });
+        })
+        .catch(error => console.error('Error fetching label probabilities:', error));
+}
 
 
 

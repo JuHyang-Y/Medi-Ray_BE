@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
 	// 전화번호 인증 버튼 클릭 시
-	document
+	/*document
 		.getElementById('verifyPhoneBtn')
 		.addEventListener('click', function() {
 			alert('인증 완료!');
-		});
+		});*/
 
 	// 이메일 중복 확인 버튼 클릭 시
 	document
@@ -120,14 +120,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		// 회원가입 데이터를 서버로 전송
 		const data = {
-			dtName: name,
-			dtTelno: phone,
-			dtId: email,
-			dtPw: password,
-			dtCode: doctorCode,
-			division: hospital,
+		    dtName: name,
+		    dtTelno: phone,
+		    dtId: email,
+		    dtPw: password,
+		    dtCode: doctorCode,
+		    division: hospital,
 		};
 
+		
 		fetch('/signup/register', {
 		    method: 'POST',
 		    headers: {

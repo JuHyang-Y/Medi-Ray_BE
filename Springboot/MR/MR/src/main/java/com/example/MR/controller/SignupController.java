@@ -63,6 +63,7 @@ public class SignupController {
                 return 3;  // 의사 코드 중복 시 3 반환
             }
 
+            System.out.println(dt);
 	        // 중복이 없는 경우 회원 정보를 DB에 삽입
 //	        mapper.registDoctor(dt);
             service.registerUser(dt);

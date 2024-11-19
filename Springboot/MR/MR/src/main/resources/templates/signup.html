@@ -7,7 +7,7 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 외부 CSS 파일 -->
-    <link rel="stylesheet" href="/static/assets/css/styles.css" />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
   </head>
   <body
     class="bg-gray-100 font-sans relative"
@@ -88,6 +88,7 @@
                 class="w-full p-2 border border-gray-300 rounded"
                 placeholder="영문, 숫자, 특수문자가 포함된 8-20자"
               />
+              <span id="password-message" class="text-red-500 text-xs"></span>
             </div>
 
             <div>
@@ -100,6 +101,7 @@
                 class="w-full p-2 border border-gray-300 rounded"
                 placeholder="비밀번호를 한 번 더 입력해주세요"
               />
+              <span id="confirm-password-message" class="text-xs"></span> <!-- 색상 변경을 위한 id 유지 -->
             </div>
 
             <div>
@@ -170,6 +172,6 @@
     </script>
 
     <!-- 외부 파도 애니메이션 스크립트 추가 -->
-    <script src="/assets/js/wave.js"></script>
+    <script src="/assets/js/signup.js"></script>
   </body>
 </html>

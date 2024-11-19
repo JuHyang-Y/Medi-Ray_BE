@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // jQuery AJAX 요청
         $.ajax({
-            url: 'https://192.168.21.38:8000/dicom/dupload', // 서버 업로드 엔드포인트
+            url: 'https://192.168.20.146:8000/dicom/dupload', // 서버 업로드 엔드포인트
             type: 'POST',
             enctype: 'multipart/form-data',
             data: formData,

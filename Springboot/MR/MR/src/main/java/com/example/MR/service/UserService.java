@@ -21,13 +21,13 @@ public class UserService {
     }
 
     // 사용자 등록 메서드
-    public void registerUser(String dtCode, String dtId, String rawPassword, String dtName, String division, String dtTelno) {
+    public void registerUser(String DT_CODE, String DT_ID, String DT_PW, String DT_NAME, String DIVISION, String DT_TELNO) {
         // 1. 비밀번호 암호화
-        String encodedPassword = passwordEncoder.encode(rawPassword);
+        String encodedPassword = passwordEncoder.encode(DT_PW);
         System.out.println("암호화된 비밀번호: " + encodedPassword); // 암호화된 비밀번호 로그 출력
 
         // 2. DoctorTb 객체 생성 및 데이터 설정 (생성자를 사용하여 초기화)
-        DoctorTb doctor = new DoctorTb(dtCode, dtId, encodedPassword, dtName, division, dtTelno);
+        DoctorTb doctor = new DoctorTb(DT_CODE, DT_ID, encodedPassword, DT_NAME, DIVISION, DT_TELNO);
 
         // 3. 데이터베이스에 사용자 등록
         mapper.registDoctor(doctor);

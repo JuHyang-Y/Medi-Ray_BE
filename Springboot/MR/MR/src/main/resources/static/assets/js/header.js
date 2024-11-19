@@ -69,6 +69,19 @@ document.addEventListener('DOMContentLoaded', function () {
       authContainer.appendChild(loginButton);
     }
   }
+  
+  // 로고 클릭 시 main으로 이동
+  document.getElementById('logo').addEventListener('click', function () {
+    // 현재 경로 확인
+    const currentPath = window.location.pathname;
+
+    // xray.html일 경우 경로를 "../main"으로 변경
+    if (currentPath.includes('xray')) {
+      window.location.href = '../main';
+    } else {
+      window.location.href = 'main';
+    }
+  });
 
   // 아코디언 메뉴 동작
   const menuToggle = document.getElementById('menuToggle');
@@ -91,10 +104,5 @@ document.addEventListener('DOMContentLoaded', function () {
       updateAuthUI(null);  // 로그인되지 않은 경우
     }
   });
-  // 로고 클릭 시 main로 이동
-  document.getElementById('logo').addEventListener('click', function () {
-    window.location.href = 'main';
-  });
-  
   
 });

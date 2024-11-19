@@ -1,6 +1,6 @@
 from tabnanny import check
 
-from fastapi import FastAPI, File, UploadFile, APIRouter  # FastAPI 관련 모듈 임포트
+from fastapi import APIRouter  # FastAPI 관련 모듈 임포트
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel  # 데이터 모델링을 위한 Pydantic 임포트
 import SimpleITK as sitk  # 의료 이미지 처리를 위한 SimpleITK 임포트
@@ -15,7 +15,6 @@ import tempfile  # 임시 파일 생성을 위한 tempfile 모듈 임포트
 from starlette.responses import RedirectResponse
 from typing import Dict
 
-import torch
 from fastapi import FastAPI, File, UploadFile
 #from model import ModelLoader
 from PIL import Image

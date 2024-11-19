@@ -1,6 +1,10 @@
 from fastapi import FastAPI
-from app.routers import dicom_upload
+from app.routers import dicom_upload_con_test
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+import traceback
+
 
 app = FastAPI()
 
@@ -21,8 +25,17 @@ app.add_middleware(
 )
 
 # 라우터 등록
-app.include_router(dicom_upload.router, prefix="/dicom", tags=["DICOM"])
-#app.include_router(grad_cam_.router, prefix="/grad-cam", tags=["Grad-CAM"])
+app.include_router(dicom_upload_con_test.router, prefix="/dicom", tags=["Medical Analysis"])
+print(app.routes)  # FastAPI에 등록된 모든 라우터 출력
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    # 콘솔에 에러 로그 출력
+    traceback.print_exc()
+    return JSONResponse(
+        status_code=500,
+        content={"message": f"Internal Server Error: {str(exc)}"},
+    )
 
 # uvicorn으로 이 모듈을 직접 실행할 때 서버를 구동하기 위한 코드
 if __name__ == "__main__":
