@@ -45,18 +45,19 @@
       </button>
 
       <!-- User Info Section -->
-      <div
-        class="flex flex-col items-center border-b border-gray-700 pb-4 mb-4"
-      >
-        <img
-          src="/assets/img/profile.png"
-          alt="Profile Image"
-          class="w-16 h-16 rounded-full mb-2"
-        />
-        <div id="user-info" class="text-center text-gray-300 text-lg">
-          <!-- 동적으로 사용자 이름과 버튼이 추가됩니다 -->
-        </div>
-      </div>
+	<div class="flex flex-col items-center justify-center border-b border-gray-700 pb-4 mb-4 mt-12">
+	  <img
+	    src="/assets/img/Profile.png"
+	    alt="Profile Image"
+	    class="w-16 h-16 rounded-full mb-2"
+	  />
+	<div id="user-info" class="text-center text-gray-300 text-lg flex flex-col gap-2 items-center">
+	  <p>사용자 이름</p>
+	  <button class="text-red-500 hover:text-red-600 ml-0">로그아웃</button>
+	</div>
+	
+	</div>
+
 
       <!-- Navigation Links -->
       <nav class="space-y-2">
@@ -81,64 +82,72 @@
       </nav>
     </div>
 
-    <!-- Main Section -->
-    <div class="container mx-auto px-4 md:px-8 mt-24 md:mt-20">
-      <div class="flex flex-col md:flex-row gap-8">
-        <!-- Left Side: Canvas -->
-        <div class="flex-1">
-          <div class="bg-white p-4 md:p-6 rounded-lg shadow-md">
-            <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center">
-              Diagnosis
-            </h2>
-            <div
-              class="flex flex-wrap items-center justify-center gap-2 md:gap-4 mb-4 md:mb-6 p-4 bg-gray-50 rounded-lg"
-            >
-              <!-- Buttons -->
-              <button
-                id="brushTool"
-                class="px-3 py-1 md:px-4 md:py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition"
-              >
-                BRUSH
-              </button>
-              <button
-                id="rectangleTool"
-                class="px-3 py-1 md:px-4 md:py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition"
-              >
-                RECTANGLE
-              </button>
-              <button
-                id="clearCanvas"
-                class="px-3 py-1 md:px-4 md:py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition"
-              >
-                CLEAR
-              </button>
-              <button
-                id="camButton"
-                class="px-3 py-1 md:px-4 md:py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-md transition"
-              >
-                CAM
-              </button>
-              <label class="flex items-center">
-                Color:
-                <input
-                  type="color"
-                  id="colorPicker"
-                  class="ml-1 md:ml-2 w-6 md:w-8 h-6 md:h-8 rounded cursor-pointer"
-                />
-              </label>
-              <label class="flex items-center">
-                Size:
-                <input
-                  type="range"
-                  id="brushSize"
-                  min="1"
-                  max="20"
-                  value="5"
-                  class="ml-1 md:ml-2 w-20 md:w-24"
-                />
-              </label>
-            </div>
+<!-- Main Section -->
+<div class="container mx-auto px-4 md:px-8 mt-24 md:mt-20">
+  <div class="flex flex-col md:flex-row gap-8">
+    <!-- Left Side: Canvas -->
+    <div class="flex-1">
+      <div class="bg-white p-4 md:p-6 rounded-lg shadow-md">
+        <h2 class="text-xl md:text-2xl font-bold mb-4 md:mb-6 text-center">
+          Diagnosis
+        </h2>
+        <div
+          class="flex flex-wrap items-center justify-center gap-2 md:gap-4 mb-4 md:mb-6 p-4  rounded-lg"
+        >
+          <!-- Buttons using input and label -->
+          <input type="radio" name="tool" id="brushTool" class="hidden" />
+          <label
+            for="brushTool"
+            class="tool-button cursor-pointer bg-white text-gray-800 hover:bg-gray-200 rounded-md transition"
+          >
+            <img src="/assets/img/brush.png" alt="BRUSH" style="width: 24px; height: 24px;" />
+          </label>
 
+          <input type="radio" name="tool" id="rectangleTool" class="hidden" />
+          <label
+            for="rectangleTool"
+            class="tool-button cursor-pointer bg-white text-gray-800 hover:bg-gray-200 rounded-md transition"
+          >
+            <img src="/assets/img/rect.png" alt="RECTANGLE" style="width: 24px; height: 24px;" />
+          </label>
+
+          <input type="radio" name="tool" id="clearCanvas" class="hidden" />
+          <label
+            for="clearCanvas"
+            class="tool-button cursor-pointer bg-white text-gray-800 hover:bg-gray-200 rounded-md transition"
+          >
+            <img src="/assets/img/clear.png" alt="CLEAR" style="width: 24px; height: 24px;" />
+          </label>
+
+          <input type="radio" name="camtool" id="camButton" class="hidden" />
+          <label
+            for="camButton"
+            class="tool-button cursor-pointer bg-white text-gray-800 hover:bg-gray-200 rounded-md transition"
+          >
+            <img src="/assets/img/heatmap.png" alt="HEATMAP" style="width: 24px; height: 24px;" />
+          </label>
+
+          <!-- 기존의 Color와 Size 입력란은 그대로 유지 -->
+          <label class="flex items-center">
+            Color:
+            <input
+              type="color"
+              id="colorPicker"
+              class="ml-1 md:ml-2 w-6 md:w-8 h-6 md:h-8 rounded cursor-pointer"
+            />
+          </label>
+          <label class="flex items-center">
+            Size:
+            <input
+              type="range"
+              id="brushSize"
+              min="1"
+              max="20"
+              value="5"
+              class="ml-1 md:ml-2 w-20 md:w-24"
+            />
+          </label>
+        </div>
             <!-- Canvas Section -->
             <div class="relative">
               <div class="canvas-container relative w-full max-w-full h-auto">

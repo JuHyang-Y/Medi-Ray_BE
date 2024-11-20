@@ -1,8 +1,7 @@
 from fastapi import FastAPI
-from app.routers import dicom_upload_con_test
+from app.routers import dicom_upload_con_test, vit_cam
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from fastapi.exceptions import RequestValidationError
 import traceback
 
 
@@ -20,13 +19,13 @@ app.add_middleware(
     allow_origins=["*"],  # 허용할 출처 목록
     allow_credentials=True,
     allow_methods=["*"],  # 허용할 HTTP 메서드 (GET, POST 등)
-    allow_headers=["*"]  # 허용할 HTTP 헤더
-
+    allow_headers=["*"],  # 허용할 HTTP 헤더
+    expose_headers=["Access-Control-Allow-Origin"],  # CORS 관련 헤더 노출
 )
 
 # 라우터 등록
 app.include_router(dicom_upload_con_test.router, prefix="/dicom", tags=["Medical Analysis"])
-print(app.routes)  # FastAPI에 등록된 모든 라우터 출력
+app.include_router(vit_cam.router, prefix="/dicom", tags=["Grad Cam"])
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):

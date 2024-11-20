@@ -46,16 +46,15 @@
       </button>
 
       <!-- User Info Section -->
-      <div
-        class="flex flex-col items-center border-b border-gray-700 pb-4 mb-4"
-      >
+      <div class="flex flex-col items-center justify-center border-b border-gray-700 pb-4 mb-4">
         <img
-          src="/assets/img/profile.png"
+          src="/assets/img/Profile.png"
           alt="Profile Image"
           class="w-16 h-16 rounded-full mb-2"
         />
-        <div id="user-info" class="text-center text-gray-300 text-lg">
-          <!-- 동적으로 사용자 이름과 버튼이 추가됩니다 -->
+        <div id="user-info" class="text-center text-gray-300 text-lg flex flex-col gap-2 items-center">
+          <p>사용자 이름</p>
+          <button class="text-red-500 hover:text-red-600 ml-0">로그아웃</button>
         </div>
       </div>
 
@@ -83,7 +82,7 @@
     </div>
 
     <!-- 업로드 컨테이너 -->
-    <div class="upload-container mx-auto mt-24">
+    <div class="upload-container mx-auto mt-24 " style="height: 700px;">
       <h1 id="dicomTitle" class="text-3xl font-bold mb-4 text-center">
         DICOM Upload
       </h1>
@@ -104,19 +103,33 @@
       </div>
 
       <!-- 파일 업로드 시 미리보기 -->
-      <div id="preview-container" class="mt-6 hidden preview-container">
-        <button class="close-preview absolute top-2 right-2">×</button>
-        <!-- 닫기 버튼 추가 -->
-        <img id="preview-image" class="preview-image" alt="Image Preview" />
-        <!-- 전송 버튼 -->
-        <button id="submitBtn" class="bg-blue-500 text-white py-2 px-4 rounded">
-          전송
-        </button>
+      <div id="preview-container" class="mt-6 hidden preview-container" style="border: none;">
+        <div class="relative">
+          <img id="preview-image" class="preview-image" alt="Image Preview" style="border: none;"/>
+          <div class="flex justify-center items-center gap-2 mt-4">
+            <!-- 전송 버튼 -->
+            <button id="submitBtn" class="bg-blue-500 text-white py-2 px-4 rounded">
+              전송
+            </button>
+            <!-- 닫기 버튼 -->
+            <button
+              id="closePreviewBtn"
+              class="bg-gray-300 text-black py-2 px-4 rounded hover:bg-gray-400"
+            >
+              취소
+            </button>
+          </div>
+        </div>
+        <!-- 설명 문구 -->
+        <p class="text-gray-500 text-sm text-center mt-2
+         mb-4">
+          전송 버튼을 누르면 서버로 전송됩니다.
+        </p>
       </div>
     </div>
 
     <!-- 환자 정보 테이블 -->
-    <div class="patient-info-container mt-8 mx-auto">
+    <div class="patient-info-container mt-8 mb-8 mx-auto">
       <table class="table-auto w-full border">
         <thead>
           <tr class="bg-gray-200">

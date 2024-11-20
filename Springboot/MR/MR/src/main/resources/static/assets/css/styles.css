@@ -101,3 +101,20 @@ body {
 .accordionMenu.open {
   transform: translateX(0);
 }
+
+/* xray 버튼 활성화 */
+/* 버튼 기본 스타일 */
+.tool-button {
+  padding: 0.5rem 1rem;
+}
+
+/* 선택된 버튼 스타일 */
+input[name="tool"]:checked + .tool-button {
+  background-color: #3b82f6; /* Tailwind의 blue-500 */
+  color: white;
+}
+/* 선택된 버튼 스타일 */
+input[name="camtool"]:checked + .tool-button {
+  background-color: #3b82f6; /* Tailwind의 blue-500 */
+  color: white;
+}

@@ -120,12 +120,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		// 회원가입 데이터를 서버로 전송
 		const data = {
-		    dtName: name,
-		    dtTelno: phone,
+			dtCode: doctorCode,
 		    dtId: email,
 		    dtPw: password,
-		    dtCode: doctorCode,
+		    dtName: name,
 		    division: hospital,
+		    dtTelno: phone,
 		};
 
 		

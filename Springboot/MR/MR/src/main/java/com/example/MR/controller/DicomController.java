@@ -10,16 +10,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.MR.entity.ImgTb;
 import com.example.MR.entity.ResultTb;
+import com.example.MR.entity.UploadRequestDto;
 import com.example.MR.mapper.DiagnosisMapper;
 import com.example.MR.mapper.MRMapper;
 
@@ -81,34 +93,32 @@ public class DicomController {
 
     @PostMapping("/imgupload")
     @Transactional(rollbackFor = {IOException.class, ArrayIndexOutOfBoundsException.class})
-    public ResponseEntity<String> savePngAndResult(
-    		@RequestParam("image") String base64Image, 
-    		@RequestParam("ptCode") String ptCode, 
-    		@RequestParam("fileName") String fileName,
-    		@RequestParam Map<String, Double> modelResults) throws Exception {
-//        try {
+    public ResponseEntity<?> savePngAndResult(@RequestBody UploadRequestDto requestDto) throws Exception {
+        try {
+        	 
+            
             // Base64 인코딩된 데이터에서 헤더 제거 및 디코딩
-            String base64Data = base64Image.split(",")[1];
+            String base64Data = requestDto.getImage();
             byte[] imageBytes = Base64.getDecoder().decode(base64Data);
 
             // 파일 경로 설정 및 저장
-            String uploadDir = "C:\\Users\\USER\\dicom\\" + ptCode; // 실제 경로로 변경
+            String uploadDir = "C:\\Users\\USER\\dicom\\" + requestDto.getPtCode(); // 실제 경로로 변경
             File dir = new File(uploadDir);
             if (!dir.exists()) {
                 dir.mkdirs(); // 디렉토리가 없으면 생성
             }
 
-            String filePath = uploadDir + "\\" + fileName + ".png";
+            String filePath = uploadDir + "\\" + requestDto.getFileName() + ".png";
             try (FileOutputStream fos = new FileOutputStream(filePath)) {
                 fos.write(imageBytes);
             }
 
             // `ImgTb` 객체 생성 및 데이터 설정
-            String dtCode = mapper.DtCode(ptCode);
+            String dtCode = mapper.DtCode(requestDto.getPtCode());
 
             ImgTb imgTb = ImgTb.builder()
-                                .xrayCode(fileName)
-                                .ptCode(ptCode)
+                                .xrayCode(requestDto.getFileName())
+                                .ptCode(requestDto.getPtCode())
                                 .xrayImgPath(filePath) // 이미지 경로 설정
                                 .dtCode(dtCode)
                                 .build();
@@ -119,34 +129,34 @@ public class DicomController {
             
             // 3. RESULT_TB 데이터 저장
             ResultTb resultTb = ResultTb.builder()
-                    .xrayCode(fileName)
-                    .ptCode(ptCode)
-                    .Atelectasis(modelResults.get("Atelectasis"))
-                    .Cardiomegaly(modelResults.get("Cardiomegaly"))
-                    .Consolidation(modelResults.get("Consolidation"))
-                    .Edema(modelResults.get("Edema"))
-                    .Enlarged_Cardiomediastinum(modelResults.get("Enlarged_Cardiomediastinum"))
-                    .Fracture(modelResults.get("Fracture"))
-                    .Lung_Lesion(modelResults.get("Lung_Lesion"))
-                    .Lung_Opacity(modelResults.get("Lung_Opacity"))
-                    .No_Finding(modelResults.get("No_Finding"))
-                    .Pleural_Effusion(modelResults.get("Pleural_Effusion"))
-                    .Pleural_Other(modelResults.get("Pleural_Other"))
-                    .Pneumonia(modelResults.get("Pneumonia"))
-                    .Pneumothorax(modelResults.get("Pneumothorax"))
-                    .Support_Devices(modelResults.get("Support_Devices"))
+                    .xrayCode(requestDto.getFileName())
+                    .ptCode(requestDto.getPtCode())
+                    .Atelectasis(requestDto.getModelResult().get("Atelectasis"))
+                    .Cardiomegaly(requestDto.getModelResult().get("Cardiomegaly"))
+                    .Consolidation(requestDto.getModelResult().get("Consolidation"))
+                    .Edema(requestDto.getModelResult().get("Edema"))
+                    .Enlarged_Cardiomediastinum(requestDto.getModelResult().get("Enlarged Cardiomediastinum"))
+                    .Fracture(requestDto.getModelResult().get("Fracture"))
+                    .Lung_Lesion(requestDto.getModelResult().get("Lung Lesion"))
+                    .Lung_Opacity(requestDto.getModelResult().get("Lung Opacity"))
+                    .No_Finding(requestDto.getModelResult().get("No Finding"))
+                    .Pleural_Effusion(requestDto.getModelResult().get("Pleural Effusion"))
+                    .Pleural_Other(requestDto.getModelResult().get("Pleural Other"))
+                    .Pneumonia(requestDto.getModelResult().get("Pneumonia"))
+                    .Pneumothorax(requestDto.getModelResult().get("Pneumothorax"))
+                    .Support_Devices(requestDto.getModelResult().get("Support Devices"))
                     .build();
             dmapper.imgReult(resultTb);
-            throw new IOException("rollback test");
 
-//            return ResponseEntity.ok("이미지, 결과 데이터베이스 저장 성공");
+            return ResponseEntity.ok(Map.of("message", "이미지와 결과가 성공적으로 저장되었습니다."));
 
-//        } catch (IOException IOe) {
-//        	
-//        	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("저장 중 오류 발생: " + IOe.getMessage());
-//        	
-//        } catch (ArrayIndexOutOfBoundsException AIOOBe) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("데이터 처리 중 오류 발생: " + AIOOBe.getMessage());
-//        }
+        } catch (IOException IOe) {
+        	TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("저장 중 오류 발생: " + IOe.getMessage());
+        	
+        } catch (ArrayIndexOutOfBoundsException AIOOBe) {
+        	TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("데이터 처리 중 오류 발생: " + AIOOBe.getMessage());
+        }
     }
 }

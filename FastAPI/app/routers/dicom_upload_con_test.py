@@ -86,7 +86,6 @@ else:
     raise ValueError('Invalid backbone: choose resnet50 or vit')
 
 model = model.to(device)
-print(args.backbone)
 
 if args.resume:
     checkpoint = torch.load(args.pretrained, map_location=torch.device('cpu'))
@@ -163,7 +162,7 @@ async def process_dicom(file: UploadFile):
         return {"message": f"Internal Server Error: {e}"}
 
 # Grad-CAM 라우터
-@router.post("/gradcam", response_model=GradCAMResponse, tags=["Medical Analysis"])
+@router.post("/resnet_gradcam", response_model=GradCAMResponse, tags=["Medical Analysis"])
 def generate_cam(request: GradCAMRequest):
     """
         Grad-CAM 이미지를 생성하고 Base64로 반환합니다.

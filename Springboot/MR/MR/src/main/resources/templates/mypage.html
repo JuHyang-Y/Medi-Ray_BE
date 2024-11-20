@@ -45,16 +45,15 @@
       </button>
 
       <!-- User Info Section -->
-      <div
-        class="flex flex-col items-center border-b border-gray-700 pb-4 mb-4"
-      >
+      <div class="flex flex-col items-center justify-center border-b border-gray-700 pb-4 mb-4 mt-12">
         <img
-          src="/assets/img/profile.png"
+          src="/assets/img/Profile.png"
           alt="Profile Image"
           class="w-16 h-16 rounded-full mb-2"
         />
-        <div id="user-info" class="text-center text-gray-300 text-lg">
-          <!-- 동적으로 사용자 이름과 버튼이 추가됩니다 -->
+        <div id="user-info" class="text-center text-gray-300 text-lg flex flex-col gap-2 items-center">
+          <p>사용자 이름</p>
+          <button class="text-red-500 hover:text-red-600 ml-0">로그아웃</button>
         </div>
       </div>
 
@@ -81,7 +80,6 @@
       </nav>
     </div>
 
-     
     <!-- Main Content -->
     <div
       class="flex justify-center items-center min-h-screen pt-20 px-4 md:px-8"
@@ -125,43 +123,67 @@
                 type="email"
                 id="email"
                 class="w-full p-2 border border-gray-300 rounded"
-                placeholder="example@gmali.com"
+                placeholder="example@gmail.com"
                 readonly
               />
             </div>
 
+            <!-- 현재 비밀번호 입력란 -->
             <div>
-              <label for="password" class="block text-gray-700 text-sm mb-1"
-                >비밀번호</label
+              <label for="current-password" class="block text-gray-700 text-sm mb-1"
+                >현재 비밀번호</label
               >
               <input
                 type="password"
-                id="password"
+                id="current-password"
                 class="w-full p-2 border border-gray-300 rounded"
-                placeholder="영문, 숫자, 특수문자가 들어간 8-20자"
+                placeholder="현재 비밀번호를 입력해주세요"
               />
-              <div id="password-message" class="text-red-500 text-sm"></div>
+              <div id="current-password-message" class="text-red-500 text-sm"></div>
+              <button
+                type="button"
+                id="confirm-current-password"
+                class="mt-2 w-full p-2 bg-gray-500 text-white rounded"
+              >
+                확인
+              </button>
             </div>
 
-            <div>
-              <label
-                for="password-confirm"
-                class="block text-gray-700 text-sm mb-1"
-                >비밀번호 확인</label
-              >
-              <input
-                type="password"
-                id="password-confirm"
-                class="w-full p-2 border border-gray-300 rounded"
-                placeholder="비밀번호를 한 번 더 입력해주세요"
-              />
-              <div id="confirm-password-message" class="text-sm"></div>
+            <!-- 새 비밀번호 입력란 (초기에 숨김 처리) -->
+            <div id="new-password-section" class="hidden">
+              <div>
+                <label for="new-password" class="block text-gray-700 text-sm mb-1"
+                  >새 비밀번호</label
+                >
+                <input
+                  type="password"
+                  id="new-password"
+                  class="w-full p-2 border border-gray-300 rounded"
+                  placeholder="새 비밀번호를 입력해주세요"
+                />
+                <div id="new-password-message" class="text-red-500 text-sm"></div>
+              </div>
+
+              <div>
+                <label for="new-password-confirm" class="block text-gray-700 text-sm mb-1"
+                  >새 비밀번호 확인</label
+                >
+                <input
+                  type="password"
+                  id="new-password-confirm"
+                  class="w-full p-2 border border-gray-300 rounded"
+                  placeholder="새 비밀번호를 한 번 더 입력해주세요"
+                />
+                <div id="new-confirm-password-message" class="text-sm"></div>
+              </div>
+
+              <!-- 비밀번호 변경 버튼 -->
               <button
                 type="button"
                 id="update-password"
-                class="mt-2 w-full p-2 bg-gray-500 text-white rounded"
+                class="mt-2 w-full p-2 bg-blue-500 text-white rounded"
               >
-                수정
+                비밀번호 변경
               </button>
             </div>
 

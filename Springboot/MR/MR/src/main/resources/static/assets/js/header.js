@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const logoutButton = document.createElement('button');
       logoutButton.textContent = '로그아웃';
-      logoutButton.classList.add('text-red-500', 'text-lg', 'ml-4');
+      logoutButton.classList.add('text-red-500', 'text-lg',);
       logoutButton.addEventListener('click', function() {
 	    fetch('/logout', { method: 'POST' })
 	        .then(() => {
