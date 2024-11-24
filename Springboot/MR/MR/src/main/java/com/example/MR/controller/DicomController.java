@@ -55,32 +55,32 @@ public class DicomController {
     @Autowired
     private DiagnosisMapper dmapper;
 
-    @PostMapping("/dicom")
-    public ResponseEntity<?> uploadDicom(@RequestParam("file") MultipartFile file) {
-        try {
-            RestTemplate restTemplate = new RestTemplate();
-
-            // FastAPI로 전송할 요청 데이터 설정
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-            Resource dicomResource = new ByteArrayResource(file.getBytes()) {
-                @Override
-                public String getFilename() {
-                    return file.getOriginalFilename();
-                }
-            };
-
-            HttpEntity<Resource> requestEntity = new HttpEntity<>(dicomResource, headers);
-
-            // FastAPI로 파일 전송
-            ResponseEntity<Map> response = restTemplate.exchange(fastapiUrl + "/dupload", HttpMethod.POST, requestEntity, Map.class);
-
-            return ResponseEntity.ok(response.getBody());  // FastAPI의 JSON 응답을 그대로 클라이언트에 반환
-
-        } catch (IOException e) {
-            return ResponseEntity.status(500).body("파일 처리 중 오류가 발생했습니다: " + e.getMessage());
-        }
-    }
+//    @PostMapping("/dicom")
+//    public ResponseEntity<?> uploadDicom(@RequestParam("file") MultipartFile file) {
+//        try {
+//            RestTemplate restTemplate = new RestTemplate();
+//
+//            // FastAPI로 전송할 요청 데이터 설정
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+//            Resource dicomResource = new ByteArrayResource(file.getBytes()) {
+//                @Override
+//                public String getFilename() {
+//                    return file.getOriginalFilename();
+//                }
+//            };
+//
+//            HttpEntity<Resource> requestEntity = new HttpEntity<>(dicomResource, headers);
+//
+//            // FastAPI로 파일 전송
+//            ResponseEntity<Map> response = restTemplate.exchange(fastapiUrl + "/dupload", HttpMethod.POST, requestEntity, Map.class);
+//
+//            return ResponseEntity.ok(response.getBody());  // FastAPI의 JSON 응답을 그대로 클라이언트에 반환
+//
+//        } catch (IOException e) {
+//            return ResponseEntity.status(500).body("파일 처리 중 오류가 발생했습니다: " + e.getMessage());
+//        }
+//    }
 
     // 의사 정보 받아오기
     @GetMapping("/dtsearch")
@@ -91,6 +91,8 @@ public class DicomController {
     }
     
 
+//    private static final String UPLOAD_DIR = "/data/dicom/";
+    
     @PostMapping("/imgupload")
     @Transactional(rollbackFor = {IOException.class, ArrayIndexOutOfBoundsException.class})
     public ResponseEntity<?> savePngAndResult(@RequestBody UploadRequestDto requestDto) throws Exception {
@@ -102,7 +104,8 @@ public class DicomController {
             byte[] imageBytes = Base64.getDecoder().decode(base64Data);
 
             // 파일 경로 설정 및 저장
-            String uploadDir = "C:\\Users\\USER\\dicom\\" + requestDto.getPtCode(); // 실제 경로로 변경
+             String uploadDir = "C:\\Users\\USER\\dicom\\" + requestDto.getPtCode(); // 실제 경로로 변경
+//            String uploadDir = UPLOAD_DIR + requestDto.getPtCode(); // volume경로로 변경
             File dir = new File(uploadDir);
             if (!dir.exists()) {
                 dir.mkdirs(); // 디렉토리가 없으면 생성

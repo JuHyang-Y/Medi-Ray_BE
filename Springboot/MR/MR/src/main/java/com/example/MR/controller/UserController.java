@@ -1,5 +1,6 @@
 package com.example.MR.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,22 +36,23 @@ public class UserController {
 	
 	
 	
-	// 로그인 후 사용자 이름 가져오기
-    @GetMapping("/get-name")
-    public ResponseEntity<String> getName(@AuthenticationPrincipal UserDetails userDetails) {
-        String dtId = userDetails.getUsername();  // Spring Security에서 인증된 사용자 ID 가져오기
-
-        // dtId로 데이터베이스에서 정보 조회
-        DoctorTb doctor = mapper.checkDuplicateId(dtId);
-        
-        if (doctor != null) {
-            return ResponseEntity.ok(doctor.getDT_NAME());  // dtName만 반환
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
-        }
+	/*
+	 * // 로그인 후 사용자 이름 가져오기
+	 * 
+	 * @GetMapping("/get-name") public ResponseEntity<String>
+	 * getName(@AuthenticationPrincipal UserDetails userDetails) { String dtId =
+	 * userDetails.getUsername(); // Spring Security에서 인증된 사용자 ID 가져오기
+	 * 
+	 * // dtId로 데이터베이스에서 정보 조회 DoctorTb doctor = mapper.checkDuplicateId(dtId);
+	 * 
+	 * if (doctor != null) { return ResponseEntity.ok(doctor.getDT_NAME()); //
+	 * dtName만 반환 } else { return
+	 * ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다."); }
+	 
     }
+    */
     
-    // 마이페이지(정보 불러오기)
+    // 마이페이지(정보 불러오기), 로그인 후 사용자 이름 가져오기(header)
     @GetMapping("/mypage")
     public ResponseEntity<DoctorTb> getUserDetails(@AuthenticationPrincipal UserDetails userDetails) {
     	String dtId = userDetails.getUsername();  // 인증된 사용자 ID 가져오기
@@ -61,21 +64,35 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
     
-    // 마이페이지(비밀번호 변경)
-    @PutMapping("/changepw")
-    public ResponseEntity<Integer> changePassword(@RequestBody Map<String, String> requestData, Authentication authentication) {
-    	String currentPw = requestData.get("currentPw");  // 현재 비밀번호
-        String newPw = requestData.get("newPw");          // 새 비밀번호
+    // 마이페이지(현재 비밀번호 확인)
+    @PostMapping("/checkpw")
+    public ResponseEntity<Map<String, Boolean>> checkPassword(@RequestBody Map<String, String> requestData, Authentication authentication) {
+    	String currentPw = requestData.get("currentPassword");  // 현재 비밀번호
         String dtId = authentication.getName();           // 인증된 사용자 ID 가져오기
         
-        DoctorTb doctor = mapper.checkDuplicateId(dtId);
+        DoctorTb doctor = mapper.checkDuplicateId(dtId);  // 아이디 중복 체크
+        
+        Map<String, Boolean> response = new HashMap<>();
         
         // 2. 현재 비밀번호가 일치하는지 확인
-        if (!passwordEncoder.matches(currentPw, doctor.getDT_PW())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(-1); // 비밀번호 불일치
+        if (passwordEncoder.matches(currentPw, doctor.getDT_PW())) {
+        	response.put("isValid", true);
+        }else {
+            response.put("isValid", false);
         }
 
-        // 3. 새 비밀번호 암호화 후 업데이트
+        return ResponseEntity.ok(response);
+    }
+    
+    
+    
+	 // 비밀번호 변경
+    @PutMapping("/changepw")
+    public ResponseEntity<Integer> changePassword(@RequestBody Map<String, String> requestData, Authentication authentication) {
+        String newPw = requestData.get("dtPw");          // 새 비밀번호
+        String dtId = authentication.getName();           // 인증된 사용자 ID 가져오기
+
+        // 새 비밀번호 암호화 후 업데이트
         String encodedNewPw = passwordEncoder.encode(newPw);
         try {
             mapper.updateDoctorPw(dtId, encodedNewPw); // 암호화된 새 비밀번호로 업데이트
@@ -84,6 +101,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0);  // 실패 시 0 반환
         }
     }
+
     
     
     // 마이페이지(의사소속 변경)

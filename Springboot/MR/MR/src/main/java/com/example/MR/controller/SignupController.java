@@ -63,11 +63,15 @@ public class SignupController {
                 return 3;  // 의사 코드 중복 시 3 반환
             }
 
-            System.out.println(dt);
 	        // 중복이 없는 경우 회원 정보를 DB에 삽입
-//	        mapper.registDoctor(dt);
-            service.registerUser(dt);
-	        return 1; // 성공 시 1 반환
+            int result = service.registerUser(dt);
+            if(result == 1) {
+            	System.out.println("회원가입 성공");
+            	return 1; // 성공 시 1 반환            	
+            } else {
+                System.out.println("회원가입 실패");
+                return 0; // 실패
+            }
 	    } catch (Exception e) {
 	        e.printStackTrace(); // 에러가 발생하면 출력
 	        return 0; // 실패 시 0 반환

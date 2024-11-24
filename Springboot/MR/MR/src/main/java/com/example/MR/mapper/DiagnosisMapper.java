@@ -2,6 +2,7 @@ package com.example.MR.mapper;
 
 import java.util.ArrayList;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -45,5 +46,12 @@ public interface DiagnosisMapper {
 	@Select("SELECT * FROM RESULT_TB "
 			+ "WHERE XRAY_CODE = #{xrayCode}") 
 	public ArrayList<ResultTb> resultList(String xrayCode);
+	
+	// 선택한 리스트에 해당하는 사진이 경로에 존재하지 않는다면, 이미지 db랑 결과 db에서 지우기
+	@Delete("DELETE FROM IMG_TB WHERE XRAY_CODE = {xrayCode}")
+	public int DeleteImg(String XRAY_CODE);
+	
+	@Delete("DELETE FROM RESULT_TB WHERE XRAY_CODE = {xrayCode}")
+	public int DeleteResult(String XRAY_CODE);
 
 }

@@ -34,6 +34,7 @@ import com.example.MR.entity.PatientTb;
 import com.example.MR.entity.ResultTb;
 import com.example.MR.mapper.DiagnosisMapper;
 import com.example.MR.mapper.MRMapper;
+import com.example.MR.service.ImgService;
 
 @RestController
 @RequestMapping("/diagnosis")
@@ -46,6 +47,11 @@ public class DiagnosisController {
     private MRMapper mapper;
     @Autowired
     private DiagnosisMapper dmapper;
+    
+    @Autowired
+    private ImgService imgService;
+    
+    
 
     // 환자 검색
     @GetMapping("/search")
@@ -102,7 +108,13 @@ public class DiagnosisController {
             Resource resource = new FileSystemResource(filePath);
 
             if (!resource.exists()) {
-            	return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 파일이 없을 때 404 반환
+            	int deleteResult = imgService.deleteRelatedData(xrayCode);
+                if (deleteResult == 1) {
+                    System.out.println("파일 없음. DB 데이터 삭제 성공: xrayCode = " + xrayCode);
+                } else {
+                    System.out.println("파일 없음. DB 데이터 삭제 실패: xrayCode = " + xrayCode);
+                }
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // 파일이 없을 때 404 반환
             }
 
             HttpHeaders headers = new HttpHeaders();
@@ -139,8 +151,8 @@ public class DiagnosisController {
                     field.setAccessible(true); // private 필드 접근 허용
                     Double value = (Double) field.get(result); // 필드의 값 가져오기
 
-                    // 50.0 이상인 확률 값만 리스트에 추가
-                    if (value != null && value > 50.0) {
+                    // 30.0 이상인 확률 값만 리스트에 추가
+                    if (value != null && value > 30.0) {
                     	// 필드명에서 "_"를 " "로 변환하여 라벨명을 생성
                         String labelName = field.getName().replace("_", " ");
                         // 필드명과 확률 값을 LabelProbability 객체에 담아 리스트에 추가
@@ -159,45 +171,5 @@ public class DiagnosisController {
     }
 
 
-    
-    // Grad-CAM 생성 요청 처리
-	// Grad-CAM 생성 요청 처리
-    @PostMapping("/gradcam")
-    public ResponseEntity<?> generateGradCam(@RequestBody Map<String, String> requestBody) {
-        try {
-            RestTemplate restTemplate = new RestTemplate(); // REST API 호출을 위한 RestTemplate 생성
-
-            // FastAPI로 요청 전송을 위한 헤더 설정
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON); // JSON 형식으로 설정
-
-            // 요청 본문에서 Base64 이미지 데이터 추출
-            String base64Img = requestBody.get("base64_img");
-            if (base64Img == null || base64Img.isEmpty()) {
-                return ResponseEntity.badRequest().body("Base64 이미지 데이터가 없습니다.");
-            }
-
-            // FastAPI로 보낼 JSON 데이터 구성
-            Map<String, String> fastApiRequestBody = new HashMap<>();
-            fastApiRequestBody.put("base64_img", base64Img);
-
-            HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(fastApiRequestBody, headers);
-
-            // FastAPI로 POST 요청 전송
-            ResponseEntity<Map> response = restTemplate.exchange(
-                fastapiUrl + "/gradcam",  // FastAPI의 Grad-CAM 엔드포인트
-                HttpMethod.POST,
-                requestEntity,
-                Map.class // 응답 데이터를 Map 형태로 받음
-            );
-
-            // FastAPI의 응답을 클라이언트로 반환
-            return ResponseEntity.ok(response.getBody());
-        } catch (Exception e) {
-            // 예외 발생 시 에러 메시지 반환
-            return ResponseEntity.status(500).body("Grad-CAM 생성 중 오류가 발생했습니다: " + e.getMessage());
-        }
-    }
-    
-    
+     
 }

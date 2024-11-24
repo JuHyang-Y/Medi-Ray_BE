@@ -1,8 +1,8 @@
 package com.example.MR.mapper;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -15,8 +15,8 @@ public interface MRMapper {
 	// 회원가입
 	// 회원가입 정보 입력하기
 	@Insert("INSERT INTO DOCTOR_TB(DT_CODE, DT_ID, DT_PW, DT_NAME, DIVISION, DT_TELNO) "
-			+ "VALUES(#{DT_CODE}, #{DT_PW}, #{DT_PW}, #{DT_NAME}, #{DIVISION}, #{DT_TELNO})")
-	public void registDoctor(DoctorTb dt);
+			+ "VALUES(#{DT_CODE}, #{DT_ID}, #{DT_PW}, #{DT_NAME}, #{DIVISION}, #{DT_TELNO})")
+	public int registDoctor(DoctorTb dt);
 
 	// 로그인, 의사테이블에서 중복된 id가 있는지 확인하기, 마이페이지
 	@Select("SELECT * FROM DOCTOR_TB WHERE BINARY DT_ID = #{DT_ID}")
@@ -69,7 +69,7 @@ public interface MRMapper {
 			+ "FROM PATIENT_TB p "
 			+ "JOIN IMG_TB i ON p.PT_CODE = i.PT_CODE " 
 			+ "JOIN DOCTOR_TB d ON p.DT_CODE = d.DT_CODE "
-			+ "WHERE (p.PT_NAME LIKE CONCAT('%', #{ptName}, '%') OR p.PT_CODE = #{ptCode}) "
+			+ "WHERE (p.PT_NAME LIKE CONCAT('%', #{ptName}, '%') OR p.PT_CODE LIKE CONCAT('%', #{ptCode}, '%'))"
 			+ "AND i.XRAY_DATE = ( " 
 			+ "    SELECT MAX(i2.XRAY_DATE) " 
 			+ "    FROM IMG_TB i2 "
@@ -77,7 +77,8 @@ public interface MRMapper {
 			+ ") " 
 			+ "ORDER BY i.XRAY_DATE DESC")
 	public List<PatientTb> patientList(String inputValue);
-
+	
+	
 	// 불필요한 연산을 뺀다... 성능 고려.. 자바에서 처리해 알간..?
 
 }
