@@ -1,0 +1,10 @@
+# 특정 폴더 및 파일 제외
+env/
+__pycache__/
+**/__pycache__/
+
+*.env
+*.env.*
+env.*
+*.pyc
+*.pyo

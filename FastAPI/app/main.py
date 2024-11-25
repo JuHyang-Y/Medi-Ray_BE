@@ -40,4 +40,4 @@ async def global_exception_handler(request, exc):
 if __name__ == "__main__":
     import uvicorn
     # FastAPI 애플리케이션을 uvicorn으로 실행
-    uvicorn.run(app, host="192.168.0.2", port=8000, ssl_certfile="cert.pem", ssl_keyfile="key.pem")
+    uvicorn.run(app, host="0.0.0.0", port=8000, ssl_certfile="cert.pem", ssl_keyfile="key.pem")
