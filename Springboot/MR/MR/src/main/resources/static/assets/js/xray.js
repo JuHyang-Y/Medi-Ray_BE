@@ -204,13 +204,13 @@ document.addEventListener('DOMContentLoaded', function() {
             resetcamToolSelection()
         }
     });
+    
 
     // 툴 버튼들의 선택 상태를 해제하는 함수
     function resetToolSelection() {
         const toolInputs = document.querySelectorAll('input[name="tool"]');
         toolInputs.forEach(input => {
             input.checked = false;
-            console.log(`Tool ${input.id} unchecked`); // 상태 확인 로그
         });
     }
     // cam 툴 버튼들의 선택 상태를 해제하는 함수
@@ -240,42 +240,74 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error fetching dateList:', error);
         });
+        
 
     // 페이지 렌더링 함수
     function renderPage() {
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
         const itemsToDisplay = data.slice(startIndex, endIndex);
+        
+        // 모든 라디오 버튼 초기화
+	    const allRadioButtons = document.querySelectorAll('#patientList input[type="radio"]');
+	    allRadioButtons.forEach(radio => {
+	        radio.checked = false;
+	    });
 
         document.querySelectorAll('#patientList > li > label').forEach(item => {
             item.innerText = "";
+            item.classList.remove('text-blue-800', 'font-bold');
+        	item.classList.add('text-blue-500');
         });
+
+		// 현재 xrayCode찾기
+		const currentXrayCode = localStorage.getItem('xrayCode');
 
         // 촬영리스트에 값 할당하기
         itemsToDisplay.forEach((item, index) => {
             const input = document.getElementById(`patientBtn${index}`);
 	        const label = document.querySelector(`label[for="patientBtn${index}"]`);
 	        label.innerText = item.xrayDate;
+	        input.value = item.xrayCode;
+	        
+	        // 현재 xrayCode와 일치하는 항목 강조
+	        if (item.xrayCode === currentXrayCode) {
+	            input.checked = true;
+	            label.classList.remove('text-blue-500');
+	            label.classList.add('text-blue-800', 'font-bold');
+	        }
 
+			
             // 입력 요소의 change 이벤트 - AJAX를 사용해 데이터 전송
 	        input.onchange = function() {
 	            if (input.checked) {
 	                // 사진 리스트 버튼 클릭 시 툴 버튼들의 선택 상태 해제
 	                resetToolSelection();
 	                resetcamToolSelection();
+	                
 	
 	                fetch(`/diagnosis/xray/imgDate?ptCode=${encodeURIComponent(ptCode)}&xrayDate=${encodeURIComponent(item.xrayDate)}`)
 	                    .then(response => response.json())
 	                    .then(imgData => {
 	                        if (imgData.length > 0) {
-	                            console.log("Received data:", imgData); // 받은 데이터를 콘솔에 출력
+								xrayCode = imgData[0].xrayCode;  // xrayCode 직접 설정
 	                            updateScreen(imgData); // 화면에 데이터 업데이트
-	                            localStorage.setItem('xrayCode', xrayCode); // localStorage에 새로운 xrayCode 저장
 	
 	                            // 선택된 xrayCode에 맞는 이미지와 의견 업데이트
 	                            fetchOpinionAndUpdate(); // 의견 업데이트
 	                            // 페이지가 변경될 때마다 호출 (예: xrayCode가 바뀔 때마다 호출)
 	                            fetchDiagnosisResults(xrayCode);
+	                            // 모든 레이블 스타일 초기화
+	                            document.querySelectorAll('#patientList > li > label').forEach(l => {
+	                                l.classList.remove('text-blue-800', 'font-bold');
+	                                l.classList.add('text-blue-500');
+	                            });
+	
+	                            // xrayCode에 맞는 리스트 선택되게 하기
+	                            // 선택된 항목만 강조
+	                            label.classList.remove('text-blue-500');
+	                            label.classList.add('text-blue-800', 'font-bold');
+
 	                        } else {
 	                            alert('선택한 데이터가 존재하지 않습니다.');
 	                        }

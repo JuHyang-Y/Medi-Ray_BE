@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  spring-boot:
+    image: juhyangyun/springboot:latest
+    ports:
+      - "8443:8443"
+    volumes:
+      - dicom:/data/dicom
+
+  fastapi:
+    image: juhyangyun/fastapi:latest
+    ports:
+      - "8000:8000"
+
+volumes:
+  dicom:
+    driver: local
