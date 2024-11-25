@@ -210,6 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const toolInputs = document.querySelectorAll('input[name="tool"]');
         toolInputs.forEach(input => {
             input.checked = false;
+            console.log(`Tool ${input.id} unchecked`); // 상태 확인 로그
         });
     }
     // cam 툴 버튼들의 선택 상태를 해제하는 함수
@@ -224,6 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const toolInputs = document.querySelectorAll('input[name="camtool"]');
         toolInputs.forEach(input => {
             input.checked = true;
+            console.log(`Tool ${input.id} unchecked`); // 상태 확인 로그
         });
     }
 
