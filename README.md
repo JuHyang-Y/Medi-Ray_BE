@@ -38,25 +38,24 @@
 </div>
 
 ### 📌 개발환경
-+ GPU
++ **GPU**
   + Pytorch 2.3.1(Python 3.10.13, CUDA 11.8, cuDNN 8.9.7)
-+ Spring Boot
++ **Spring Boot**
   + 3.3.4
   + Maven
   + JavaJDK 17
   + Project Metadata 다 기본값(Packaging : Jar)
-+ FastAPI
++ **FastAPI**
   + 0.115.0
   + python 3.10.13 → torch 2.4.1+cpu/ultralytics 8.3.9
-+ MariaDB
++ **MariaDB**
   + 10.5
 
 ### 📝 주요 업무
-+ Backend 개발
++ **Backend 개발**
   + Spring Boot와 MariaDB, FastAPI를 연동하고 데이터 관리 로직 설계 및 구현
   + Spring Security를 이용하여 인증되지 않은 사용자 접근 불가하도록 설계
-+ 데이터 관리
++ **데이터 관리**
   + HeidiSQL을 이용해 데이터베이스 테이블 관리 및 CRUD 기능 개발
-+ 프론트 기능 개선
-  + 페이지네이션 구현
++ **프론트 기능 개선**
   + CanvasAPI 랜더링 문제 해결
