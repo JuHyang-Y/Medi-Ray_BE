@@ -16,7 +16,7 @@
 → **전체 프로젝트에 대한 설명 github 주소** : [Medi-Ray](https://github.com/JIWOONG12/Medi-Ray)  
 
     
-## 📄 Medi-Ray 프로젝트 BE part 정리  
+## 📄 BE part 정리  
 ### 📚 사용 기술
 <div> 
   <img src="https://img.shields.io/badge/java-007396?style=for-the-badge&logo=java&logoColor=white"> 
