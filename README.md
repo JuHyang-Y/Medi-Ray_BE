@@ -1,2 +1,4 @@
-# java_practice
- 자바 자율 학습 정리본
+# Medi-Ray 프로젝트 BE part 정리
+Medi-Ray 팀에서 내가 맡았던 파트 자세하게 정리
+
+
