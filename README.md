@@ -51,7 +51,7 @@
 + **MariaDB**
   + 10.5
 
-### 📝 주요 업무
+## 📝 주요 업무
 + **Backend 개발**
   + Spring Boot와 MariaDB, FastAPI를 연동하고 데이터 관리 로직 설계 및 구현
   + Spring Security를 이용하여 인증되지 않은 사용자 접근 불가하도록 설계
