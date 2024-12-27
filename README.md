@@ -59,4 +59,3 @@
   + HeidiSQL을 이용해 데이터베이스 테이블 관리 및 CRUD 기능 개발
 + **프론트 기능 개선**
   + CanvasAPI 랜더링 문제 해결
->>>>>>> 5fb1e33df6d5ef8200ff2c743dba0908454dce90
