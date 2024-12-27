@@ -53,12 +53,12 @@
 
 ## 📝 참고사항
 1. Spring Boot
-+ [API 명세서](https://docs.google.com/spreadsheets/d/1gWSqK_wsTl03aVV3zX7HH4mJWQ9vPX0HMhkupyEhzwc/edit?usp=sharing) 작성중...
-+ frontend 부분 안에 포함하고 있음
+  + [API 명세서](https://docs.google.com/spreadsheets/d/1gWSqK_wsTl03aVV3zX7HH4mJWQ9vPX0HMhkupyEhzwc/edit?usp=sharing) 작성중...
+  + frontend 부분 안에 포함하고 있음
 2. FastAPI
-+ [pytorch_grad_cam](https://github.com/jacobgil/pytorch-grad-cam/tree/master)은 github 에서 다운 받아서 사용
+  + [pytorch_grad_cam](https://github.com/jacobgil/pytorch-grad-cam/tree/master)은 github 에서 다운 받아서 사용
 3. DICOM Metadata
-+ 기존 데이터에는 **환자코드만 존재**하기 때문에 시현을 위해 이름, ID, 생년월일, 성별을 임의로 지정해줌
+  + 기존 데이터에는 **환자코드만 존재**하기 때문에 시현을 위해 이름, ID, 생년월일, 성별을 임의로 지정해줌
 
   
 ## 👷 주요 업무
