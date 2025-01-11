@@ -57,7 +57,7 @@
 ![image](https://github.com/user-attachments/assets/873e0903-c74a-431d-bf39-ec71af63fcd8)
 
 ### API 문서
- + [API 명세서](https://docs.google.com/spreadsheets/d/1gWSqK_wsTl03aVV3zX7HH4mJWQ9vPX0HMhkupyEhzwc/edit?usp=sharing) 작성중...
++ [API 명세서](https://docs.google.com/spreadsheets/d/1gWSqK_wsTl03aVV3zX7HH4mJWQ9vPX0HMhkupyEhzwc/edit?usp=sharing) ~~이렇게 적는 게 맞나..?~~
 
 ## 📝 참고사항
 + Spring Boot
