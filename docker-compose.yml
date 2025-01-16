@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  app1:
+    image: juhyangyun/springboot:latest
+    ports:
+      - "8443:8443"
+
+  app2:
+    image: juhyangyun/fastapi:latest
+    ports:
+      - "8000:8000"
