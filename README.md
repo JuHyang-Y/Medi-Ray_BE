@@ -37,31 +37,8 @@
   <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
 </div>
 
-## 🪟 UI/UX 화면
-### 초기 화면
-![image](https://github.com/user-attachments/assets/6776682c-c19a-4029-9fb8-835848d43fbb)
-### 로그인 화면
-![image](https://github.com/user-attachments/assets/4fd04436-15d1-46e5-8f94-800f974229c0)
-### 회원가입 화면
-![image](https://github.com/user-attachments/assets/ce4ed0ce-a0b8-4c56-bd6c-d4895fdc5373)
-### 메인화면  
-![image](https://github.com/user-attachments/assets/641fdae3-00e6-4e0b-a323-efa4072dbdb9)
-### 회사소개 및 아코디언 실행 화면
-![image](https://github.com/user-attachments/assets/5b67b562-47b4-4941-9fac-3e68902118bc)
-### 마이페이지 화면
-![image](https://github.com/user-attachments/assets/7d88cc34-bc8c-4883-9d72-ed777fd70995)
-### DICOM 업로드 화면   
-**업로드 화면**    
-![image](https://github.com/user-attachments/assets/804b845a-3ad4-4629-8842-f4f2bc65b38a)    
-**업로드 후 화면**    
-![image](https://github.com/user-attachments/assets/4c36335a-9004-45df-8afd-8138e7e9b073)
-### 환자 검색 화면
-![image](https://github.com/user-attachments/assets/69bec279-6c6d-4c11-a7b3-4e118514247b)
-### 진단 화면
-**진단 화면**    
-![image](https://github.com/user-attachments/assets/cde4eb42-e800-4e04-98be-d6bded75e81a)    
-**Heatmap 실행화면**    
-![image](https://github.com/user-attachments/assets/959a808d-9a5c-4adb-aa97-8d85245b5b30)
+## 📽️ 시연 영상
+https://github.com/user-attachments/assets/ac672086-a89f-4133-89e5-b7196d88d683
 
 ## 📌 개발환경
 + **GPU**
@@ -81,10 +58,22 @@
 ### 시스템 아키텍처
 ![image](https://github.com/user-attachments/assets/85982069-141e-4ebe-94cc-23ce20919ff2)
 ![image](https://github.com/user-attachments/assets/873e0903-c74a-431d-bf39-ec71af63fcd8)
+    
+## 🖼️ UI/UX 화면 및 설명
+### 초기화면, 로그인화면, 회원가입화면
+![image](https://github.com/user-attachments/assets/52a64707-7157-4cf8-8c08-d670282102c8)
+### 메인화면, 회사소개 및 아코디언 실행화면, 마이페이지화면
+![image](https://github.com/user-attachments/assets/6a3b1e3b-77e6-41e8-9f66-668392cdea81)
+### DICOM업로드화면, 업로드후화면
+![image](https://github.com/user-attachments/assets/9666a3c6-aafe-4d69-927a-1cde7183dcbe)
+### 환자검색화면
+![image](https://github.com/user-attachments/assets/26aee289-d07d-4903-9efd-b3e15a285eac)
+### 진단화면, Heatmap실행화면
+![image](https://github.com/user-attachments/assets/bc43f873-3152-407b-a1d7-7e5907d1015c)
+![image](https://github.com/user-attachments/assets/b874bb57-f44d-476a-a797-f2c564627e63)
 
 ### API 문서
-+ [API 명세서](https://docs.google.com/spreadsheets/d/1gWSqK_wsTl03aVV3zX7HH4mJWQ9vPX0HMhkupyEhzwc/edit?usp=sharing) ~~이렇게 적는 게 맞나..?~~
-
++ [API 명세서](https://docs.google.com/spreadsheets/d/1gWSqK_wsTl03aVV3zX7HH4mJWQ9vPX0HMhkupyEhzwc/edit?usp=sharing)
 ## 📝 참고사항
 + Spring Boot
   + frontend 부분 안에 포함하고 있음
