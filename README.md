@@ -55,9 +55,10 @@ https://github.com/user-attachments/assets/ac672086-a89f-4133-89e5-b7196d88d683
   + 10.5
  
 ## ✏️ 시스템 아키텍처 & API 문서
-### 시스템 아키텍처
 ![image](https://github.com/user-attachments/assets/85982069-141e-4ebe-94cc-23ce20919ff2)
 ![image](https://github.com/user-attachments/assets/873e0903-c74a-431d-bf39-ec71af63fcd8)
+### API 문서
++ [API 명세서](https://docs.google.com/spreadsheets/d/1gWSqK_wsTl03aVV3zX7HH4mJWQ9vPX0HMhkupyEhzwc/edit?usp=sharing)
     
 ## 🖼️ UI/UX 화면 및 설명
 ### 초기화면, 로그인화면, 회원가입화면
@@ -72,8 +73,7 @@ https://github.com/user-attachments/assets/ac672086-a89f-4133-89e5-b7196d88d683
 ![image](https://github.com/user-attachments/assets/bc43f873-3152-407b-a1d7-7e5907d1015c)
 ![image](https://github.com/user-attachments/assets/b874bb57-f44d-476a-a797-f2c564627e63)
 
-### API 문서
-+ [API 명세서](https://docs.google.com/spreadsheets/d/1gWSqK_wsTl03aVV3zX7HH4mJWQ9vPX0HMhkupyEhzwc/edit?usp=sharing)
+
 ## 📝 참고사항
 + Spring Boot
   + frontend 부분 안에 포함하고 있음
