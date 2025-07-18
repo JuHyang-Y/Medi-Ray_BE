@@ -39,9 +39,9 @@
 
 ## 🪟 UI/UX 화면
 ### 초기 화면
-<img src="https://github.com/user-attachments/assets/6776682c-c19a-4029-9fb8-835848d43fbb" />
+![image](https://github.com/user-attachments/assets/6776682c-c19a-4029-9fb8-835848d43fbb)
 ### 로그인 화면
-<img src="https://github.com/user-attachments/assets/4fd04436-15d1-46e5-8f94-800f974229c0" />
+![image](https://github.com/user-attachments/assets/4fd04436-15d1-46e5-8f94-800f974229c0)
 ### 회원가입 화면
 <img src="https://github.com/user-attachments/assets/ce4ed0ce-a0b8-4c56-bd6c-d4895fdc5373" />
 ### 메인화면
