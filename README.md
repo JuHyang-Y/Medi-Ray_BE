@@ -37,6 +37,32 @@
   <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">
 </div>
 
+## 🪟 UI/UX 화면
+### 초기 화면
+<img src="https://github.com/user-attachments/assets/6776682c-c19a-4029-9fb8-835848d43fbb" />
+### 로그인 화면
+<img src="https://github.com/user-attachments/assets/4fd04436-15d1-46e5-8f94-800f974229c0" />
+### 회원가입 화면
+<img src="https://github.com/user-attachments/assets/ce4ed0ce-a0b8-4c56-bd6c-d4895fdc5373" />
+### 메인화면
+<img src="https://github.com/user-attachments/assets/641fdae3-00e6-4e0b-a323-efa4072dbdb9" />
+### 회사소개 및 아코디언 실행 화면
+<img src="https://github.com/user-attachments/assets/5b67b562-47b4-4941-9fac-3e68902118bc" />
+### 마이페이지 화면
+<img src="https://github.com/user-attachments/assets/7d88cc34-bc8c-4883-9d72-ed777fd70995" />
+### DICOM 업로드 화면
+**업로드 화면**
+<img src="https://github.com/user-attachments/assets/804b845a-3ad4-4629-8842-f4f2bc65b38a" />
+**업로드 후 화면**
+<img src="https://github.com/user-attachments/assets/4c36335a-9004-45df-8afd-8138e7e9b073" />
+### 환자 검색 화면
+<img src="https://github.com/user-attachments/assets/69bec279-6c6d-4c11-a7b3-4e118514247b" />
+### 진단 화면
+**진단 화면**
+<img src="https://github.com/user-attachments/assets/cde4eb42-e800-4e04-98be-d6bded75e81a" />
+**Heatmap 실행화면**
+<img src="https://github.com/user-attachments/assets/959a808d-9a5c-4adb-aa97-8d85245b5b30" />
+
 ## 📌 개발환경
 + **GPU**
   + Pytorch 2.3.1(Python 3.10.13, CUDA 11.8, cuDNN 8.9.7)
